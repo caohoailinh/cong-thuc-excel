@@ -1,0 +1,2506 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tổng Hợp Các Hàm Excel Phổ Biến &amp; Trình Mô Phỏng Trực Tiếp</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+          },
+          colors: {
+            excel: {
+              50: '#eefaf3',
+              100: '#d4f3e2',
+              200: '#ade5c8',
+              600: '#1D6F42',
+              700: '#165834',
+              800: '#114428',
+              900: '#0d3620',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #F8FAFC;
+      color: #0F172A;
+    }
+    code, pre, input.font-mono, select.font-mono {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .code-scroll::-webkit-scrollbar {
+      height: 6px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb {
+      background: rgba(52, 211, 153, 0.35);
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#F8FAFC] text-slate-900 antialiased selection:bg-excel-100 selection:text-excel-900">
+
+  <!-- Toast thông báo (không dùng alert) -->
+  <div id="toast" role="status" aria-live="polite"
+       class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 rounded-xl bg-slate-900 px-4 py-3 text-xs sm:text-sm font-medium text-white shadow-2xl border border-slate-700/80 transition-all duration-200">
+    <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-excel-600 text-white">
+      <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+    </span>
+    <span id="toast-msg">Đã sao chép công thức!</span>
+  </div>
+
+  <!-- Nút cuộn lên đầu trang -->
+  <button id="scroll-top-btn" type="button" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+          aria-label="Cuộn lên đầu trang"
+          class="fixed bottom-5 left-5 z-40 hidden h-11 w-11 items-center justify-center rounded-full bg-excel-600 text-white shadow-lg ring-2 ring-white transition hover:bg-excel-700 active:scale-95">
+    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+    </svg>
+  </button>
+
+  <!-- Header chính phong cách bảng tính Excel -->
+  <header class="border-b border-excel-900/15 bg-gradient-to-br from-excel-800 via-excel-600 to-emerald-700 text-white">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <div class="max-w-3xl">
+          <div class="mb-3 inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1 text-xs font-semibold tracking-wide text-emerald-50 backdrop-blur-sm">
+            <span class="inline-block h-2 w-2 rounded-full bg-emerald-300"></span>
+            <span>EXCEL &amp; GOOGLE SHEETS • TRA CỨU TOÀN DIỆN</span>
+          </div>
+          <h1 class="text-2xl font-extrabold tracking-tight sm:text-3xl lg:text-4xl">
+            Tổng Hợp Các Hàm Excel Phổ Biến &amp; <span class="text-emerald-200">Trình Mô Phỏng Trực Tiếp</span>
+          </h1>
+          <p class="mt-3 text-sm leading-relaxed text-emerald-50/90 sm:text-base">
+            Tra cứu nhanh hơn 50 hàm Excel quan trọng nhất chia theo 6 nhóm chuyên đề, kèm bảng dữ liệu minh họa trực quan, giải thích tham số rõ ràng và khu vực thực hành sửa dữ liệu tính toán tức thì.
+          </p>
+        </div>
+
+        <!-- Bộ chuyển đổi dấu phân cách tham số toàn trang -->
+        <div class="shrink-0 rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-md">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-100">
+              Dấu phân cách đối số
+            </span>
+            <span id="sep-badge" class="rounded bg-slate-900/40 px-2 py-0.5 font-mono text-[11px] font-semibold text-emerald-200">
+              Đang dùng: ,
+            </span>
+          </div>
+          <div class="mt-2.5 grid grid-cols-2 gap-1.5 rounded-xl bg-slate-950/35 p-1" role="group" aria-label="Chọn dấu phân cách tham số">
+            <button id="btn-sep-comma" type="button" onclick="setSeparator(',')"
+                    class="rounded-lg bg-white px-3 py-2 text-xs font-bold text-excel-800 shadow transition sm:text-sm">
+              Dấu phẩy ( , )
+            </button>
+            <button id="btn-sep-semi" type="button" onclick="setSeparator(';')"
+                    class="rounded-lg px-3 py-2 text-xs font-bold text-white/85 transition hover:text-white sm:text-sm">
+              Chấm phẩy ( ; )
+            </button>
+          </div>
+          <p class="mt-2 max-w-[260px] text-[11px] leading-snug text-emerald-100/85">
+            Excel tiếng Việt thường dùng <code class="font-bold">;</code> — Google Sheets &amp; bản quốc tế hay dùng <code class="font-bold">,</code>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Thống kê nhanh -->
+      <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div class="rounded-xl bg-white/10 px-4 py-3 backdrop-blur-sm border border-white/10">
+          <div id="stat-total-funcs" class="text-xl sm:text-2xl font-extrabold text-white">55+</div>
+          <div class="text-xs text-emerald-100/85">Hàm phổ biến &amp; thực chiến</div>
+        </div>
+        <div class="rounded-xl bg-white/10 px-4 py-3 backdrop-blur-sm border border-white/10">
+          <div class="text-xl sm:text-2xl font-extrabold text-white">6</div>
+          <div class="text-xs text-emerald-100/85">Nhóm chức năng cốt lõi</div>
+        </div>
+        <div class="rounded-xl bg-white/10 px-4 py-3 backdrop-blur-sm border border-white/10">
+          <div class="text-xl sm:text-2xl font-extrabold text-white">Live</div>
+          <div class="text-xs text-emerald-100/85">Sửa bảng &amp; chạy hàm ngay</div>
+        </div>
+        <div class="rounded-xl bg-white/10 px-4 py-3 backdrop-blur-sm border border-white/10">
+          <div class="text-xl sm:text-2xl font-extrabold text-white">, / ;</div>
+          <div class="text-xs text-emerald-100/85">Tự đổi định dạng toàn trang</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Thanh tìm kiếm & lọc nhóm hàm (sticky) -->
+  <div class="sticky top-0 z-30 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
+    <div class="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8 space-y-3">
+      <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <!-- Ô tìm kiếm nhanh -->
+        <div class="relative flex-1 max-w-xl">
+          <svg class="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+          </svg>
+          <input id="search-input" type="search" oninput="handleSearchChange(this.value)"
+                 placeholder="Tìm theo tên hàm (VLOOKUP, SUMIFS, TEXTJOIN...) hoặc công dụng (dò tìm, làm tròn, ngày tháng...)"
+                 class="w-full rounded-xl border border-slate-300 bg-slate-50 py-2.5 pl-10 pr-9 text-xs sm:text-sm text-slate-900 placeholder-slate-400 transition focus:border-excel-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-excel-600/20" />
+          <button id="clear-search-btn" type="button" onclick="clearSearch()" title="Xóa từ khóa"
+                  class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 hover:bg-slate-200/70 hover:text-slate-700">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Thanh đếm số lượng hàm đang hiển thị + nút nhảy tới Sandbox -->
+        <div class="flex items-center justify-between gap-3 sm:justify-end">
+          <div id="result-counter" class="rounded-xl bg-excel-50 px-3 py-2 text-xs font-bold text-excel-800 border border-excel-200">
+            Đang hiển thị 0 hàm
+          </div>
+          <a href="#sandbox-section"
+             class="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-excel-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-excel-700">
+            <span>Mở Sandbox</span>
+            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Bộ lọc theo 6 nhóm hàm -->
+      <div id="category-tabs" class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar" role="tablist" aria-label="Nhóm hàm Excel">
+        <!-- Render bằng JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Nội dung chính -->
+  <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-12">
+
+    <!-- Danh sách thẻ hàm theo nhóm -->
+    <div id="functions-container" class="space-y-12">
+      <!-- Render bằng JS -->
+    </div>
+
+    <!-- Trạng thái rỗng khi không tìm thấy hàm -->
+    <div id="empty-state" class="hidden rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center">
+      <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mt-4 text-base font-bold text-slate-900">Không tìm thấy hàm Excel nào khớp với từ khóa</h3>
+      <p class="mt-1 text-sm text-slate-500">Hãy thử từ khóa khác như <code class="font-semibold text-excel-700">VLOOKUP</code>, <code class="font-semibold text-excel-700">SUMIFS</code>, <code class="font-semibold text-excel-700">ROUND</code> hoặc chọn lại "Tất cả nhóm hàm".</p>
+      <button type="button" onclick="resetFilters()"
+              class="mt-5 inline-flex items-center gap-2 rounded-xl bg-excel-600 px-4 py-2.5 text-xs font-bold text-white shadow hover:bg-excel-700 transition">
+        Đặt lại bộ lọc &amp; tìm kiếm
+      </button>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- KHU VỰC THỬ NGHIỆM TRỰC TIẾP (INTERACTIVE EXCEL SANDBOX)            -->
+    <!-- ===================================================================== -->
+    <section id="sandbox-section" class="scroll-mt-32 rounded-2xl border-2 border-excel-600/30 bg-white p-6 shadow-md sm:p-8">
+      <div class="flex flex-col gap-4 border-b border-slate-100 pb-5 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <span class="inline-flex items-center gap-1.5 rounded-lg bg-excel-100 px-2.5 py-1 text-xs font-bold text-excel-800">
+            <span>INTERACTIVE EXCEL SANDBOX</span>
+          </span>
+          <h2 class="mt-2 text-xl font-extrabold text-slate-900 sm:text-2xl">
+            Thử Nghiệm Công Thức Trực Tiếp &amp; Chỉnh Sửa Dữ Liệu Bảng
+          </h2>
+          <p class="mt-1 text-xs sm:text-sm text-slate-600">
+            Bạn có thể sửa trực tiếp <strong>Giá bán</strong>, <strong>Số lượng tồn</strong> hoặc <strong>Danh mục/Trạng thái</strong> trong bảng dưới đây, chọn hàm mô phỏng và xem kết quả tính toán tức thì.
+          </p>
+        </div>
+        <button type="button" onclick="resetSandboxTable()"
+                class="self-start lg:self-auto shrink-0 rounded-xl border border-slate-300 bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-100">
+          Khôi phục bảng gốc
+        </button>
+      </div>
+
+      <!-- Bảng dữ liệu mẫu có thể chỉnh sửa trực tiếp -->
+      <div class="mt-6">
+        <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">
+            Bảng Dữ Liệu Kho &amp; Kinh Doanh (Vùng A1:G6 — Sửa được ô Giá bán &amp; Tồn kho)
+          </h3>
+          <span class="text-[11px] text-excel-700 font-medium">
+            Mẹo: Nhập số mới vào cột Giá bán hoặc Tồn kho để thấy SUM, SUMIFS, IF, MIN/MAX đổi ngay.
+          </span>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-xs">
+          <table class="min-w-full divide-y divide-slate-200 text-left text-xs sm:text-sm">
+            <thead class="bg-excel-600 text-white">
+              <tr>
+                <th class="px-3 py-2.5 font-mono font-bold">A: Mã SP</th>
+                <th class="px-3 py-2.5 font-bold">B: Tên SP</th>
+                <th class="px-3 py-2.5 font-bold">C: Danh mục</th>
+                <th class="px-3 py-2.5 font-bold text-right">D: Giá bán (đ)</th>
+                <th class="px-3 py-2.5 font-bold text-right">E: SL Tồn</th>
+                <th class="px-3 py-2.5 font-mono font-bold">F: Ngày nhập</th>
+                <th class="px-3 py-2.5 font-bold">G: Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody id="sandbox-table-body" class="divide-y divide-slate-100 bg-white">
+              <!-- Render bằng JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Khu vực chọn hàm mô phỏng & tham số + Kết quả tức thì -->
+      <div class="mt-7 grid gap-6 lg:grid-cols-12">
+        <!-- Cột trái: Chọn hàm & tham số -->
+        <div class="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:p-5 lg:col-span-5">
+          <div>
+            <label for="sb-func-select" class="block text-xs font-bold uppercase tracking-wider text-slate-600">
+              1. Chọn hàm / tình huống mô phỏng
+            </label>
+            <select id="sb-func-select" onchange="handleSandboxFuncChange(this.value)"
+                    class="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs sm:text-sm font-bold text-slate-900 focus:border-excel-600 focus:outline-none focus:ring-2 focus:ring-excel-600/20">
+              <option value="VLOOKUP">VLOOKUP — Dò giá bán / tồn kho theo Mã SP</option>
+              <option value="INDEX_MATCH">INDEX + MATCH — Dò 2 chiều theo Mã SP &amp; Cột</option>
+              <option value="IF">IF — Đánh giá mức tồn kho / trạng thái nhập hàng</option>
+              <option value="SUMIFS">SUMIFS — Tổng giá trị tồn (Giá × SL) theo Danh mục &amp; Trạng thái</option>
+              <option value="COUNTIFS">COUNTIFS — Đếm số dòng theo Danh mục &amp; Trạng thái</option>
+              <option value="AVERAGEIF">AVERAGEIF — Giá bán trung bình theo Danh mục</option>
+              <option value="TEXTJOIN">TEXTJOIN — Nối tên sản phẩm theo Danh mục</option>
+              <option value="ROUND">ROUND — Làm tròn giá trị sau chiết khấu / VAT</option>
+            </select>
+          </div>
+
+          <div id="sb-dynamic-params" class="space-y-3 pt-1">
+            <!-- Tham số tùy biến theo hàm được chọn -->
+          </div>
+        </div>
+
+        <!-- Cột phải: Công thức, Kết quả đầu ra & Giải thích từng bước -->
+        <div class="space-y-4 lg:col-span-7">
+          <div class="rounded-xl border border-excel-200 bg-excel-50/50 p-4 sm:p-5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-excel-800">
+                2. Công thức Excel chuẩn
+              </span>
+              <button type="button" id="sb-copy-formula-btn"
+                      class="rounded-lg bg-white px-3 py-1 text-xs font-bold text-excel-700 border border-excel-200 shadow-2xs transition hover:bg-excel-100">
+                Sao chép công thức
+              </button>
+            </div>
+            <div id="sb-formula-box"
+                 class="code-scroll mt-2.5 overflow-x-auto rounded-xl bg-slate-900 px-4 py-3 font-mono text-xs sm:text-sm text-emerald-300">
+            </div>
+
+            <div class="mt-4 border-t border-excel-200/80 pt-4">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-500">
+                3. Kết quả tính toán trực tiếp
+              </span>
+              <div id="sb-output-value" class="mt-1.5 text-xl sm:text-2xl font-extrabold text-excel-800">
+              </div>
+              <p id="sb-output-note" class="mt-1 text-xs sm:text-sm text-slate-600">
+              </p>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">
+              4. Giải thích từng bước thực thi
+            </h3>
+            <ol id="sb-step-list" class="mt-3 space-y-2 text-xs sm:text-sm text-slate-700 list-decimal pl-5">
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="mt-14 border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500">
+    <div class="mx-auto max-w-7xl px-4">
+      Website Tra Cứu Hàm Excel &amp; Trình Mô Phỏng Trực Tiếp — Hỗ trợ chuyển đổi dấu phân cách <code class="font-bold">,</code> / <code class="font-bold">;</code> toàn trang.
+    </div>
+  </footer>
+
+  <!-- ======================================================================= -->
+  <!-- DỮ LIỆU HÀM EXCEL & LOGIC ĐIỀU KHIỂN TOÀN TRANG                         -->
+  <!-- ======================================================================= -->
+  <script>
+    /**
+     * Danh sách 6 nhóm chức năng chính.
+     */
+    const CATEGORIES = [
+      { id: 'all', name: 'Tất cả nhóm hàm', badgeClass: 'bg-excel-600 text-white' },
+      { id: 'lookup', name: '1. Dò tìm & Tham chiếu', badgeClass: 'bg-emerald-100 text-excel-800 border-emerald-200' },
+      { id: 'logic', name: '2. Logic & Điều kiện', badgeClass: 'bg-teal-100 text-teal-900 border-teal-200' },
+      { id: 'stats', name: '3. Thống kê & Điều kiện', badgeClass: 'bg-green-100 text-green-900 border-green-200' },
+      { id: 'text', name: '4. Văn bản / Chuỗi', badgeClass: 'bg-cyan-100 text-cyan-900 border-cyan-200' },
+      { id: 'date', name: '5. Ngày & Giờ', badgeClass: 'bg-amber-100 text-amber-900 border-amber-200' },
+      { id: 'math', name: '6. Làm tròn & Toán học', badgeClass: 'bg-indigo-100 text-indigo-900 border-indigo-200' }
+    ];
+
+    /**
+     * Kho dữ liệu tổng hợp toàn bộ hàm Excel phổ biến theo 6 nhóm.
+     * Mỗi hàm có: id, cat, name, summary, syntax (dùng ',' làm chuẩn để tự đổi thành ';'),
+     * miniTable ({ headers, rows }), exampleFormula, output, paramNotes, sandboxFunc.
+     */
+    const EXCEL_FUNCTIONS = [
+      // ==================== NHÓM 1: DÒ TÌM & THAM CHIẾU ====================
+      {
+        id: 'vlookup',
+        cat: 'lookup',
+        name: 'VLOOKUP',
+        summary: 'Dò tìm giá trị theo chiều dọc ở cột đầu tiên của bảng và trả về giá trị ở cột bên phải cùng hàng.',
+        syntax: '=VLOOKUP(lookup_value, table_array, col_index_num, [range_lookup])',
+        miniTable: {
+          headers: ['A: Mã SP', 'B: Tên SP', 'C: Giá'],
+          rows: [
+            ['SP01', 'Chuột không dây', '250,000'],
+            ['SP02', 'Bàn phím cơ', '1,150,000']
+          ]
+        },
+        exampleFormula: '=VLOOKUP("SP02", $A$2:$C$3, 3, FALSE)',
+        output: '1,150,000',
+        paramNotes: 'lookup_value: giá trị cần tìm ("SP02"); table_array: vùng bảng; col_index_num: số thứ tự cột lấy kết quả (3); FALSE: dò chính xác.',
+        sandboxFunc: 'VLOOKUP'
+      },
+      {
+        id: 'hlookup',
+        cat: 'lookup',
+        name: 'HLOOKUP',
+        summary: 'Dò tìm giá trị theo chiều ngang ở hàng đầu tiên của bảng và trả về giá trị ở hàng phía dưới cùng cột.',
+        syntax: '=HLOOKUP(lookup_value, table_array, row_index_num, [range_lookup])',
+        miniTable: {
+          headers: ['Tháng', 'T1', 'T2'],
+          rows: [
+            ['Doanh thu', '120M', '155M'],
+            ['Chi phí', '80M', '95M']
+          ]
+        },
+        exampleFormula: '=HLOOKUP("T2", $A$1:$C$3, 2, FALSE)',
+        output: '155M',
+        paramNotes: 'lookup_value: giá trị dò hàng ngang ("T2"); table_array: vùng bảng; row_index_num: thứ tự hàng cần lấy (2); FALSE: khớp tuyệt đối.',
+        sandboxFunc: 'VLOOKUP'
+      },
+      {
+        id: 'xlookup',
+        cat: 'lookup',
+        name: 'XLOOKUP',
+        summary: 'Hàm dò tìm hiện đại thay thế VLOOKUP/HLOOKUP, dò được mọi hướng (trái, phải, trên, dưới) và có sẵn giá trị khi không tìm thấy.',
+        syntax: '=XLOOKUP(lookup_value, lookup_array, return_array, [if_not_found], [match_mode], [search_mode])',
+        miniTable: {
+          headers: ['A: Mã NV', 'B: Họ tên', 'C: Lương'],
+          rows: [
+            ['NV01', 'Lan Anh', '18,000,000'],
+            ['NV02', 'Minh Đức', '22,000,000']
+          ]
+        },
+        exampleFormula: '=XLOOKUP("NV02", $A$2:$A$3, $C$2:$C$3, "Không có")',
+        output: '22,000,000',
+        paramNotes: 'lookup_array: cột/hàng dò tìm; return_array: cột/hàng trả kết quả (không cần đếm cột); if_not_found: thông báo thay thế lỗi #N/A.',
+        sandboxFunc: 'INDEX_MATCH'
+      },
+      {
+        id: 'index',
+        cat: 'lookup',
+        name: 'INDEX',
+        summary: 'Trả về giá trị tại giao điểm của số thứ tự hàng và số thứ tự cột trong một vùng dữ liệu xác định.',
+        syntax: '=INDEX(array, row_num, [column_num])',
+        miniTable: {
+          headers: ['B: Toán', 'C: Lý', 'D: Hóa'],
+          rows: [
+            ['8.0', '7.5', '9.0'],
+            ['6.5', '8.5', '7.0']
+          ]
+        },
+        exampleFormula: '=INDEX($B$2:$D$3, 2, 3)',
+        output: '7.0',
+        paramNotes: 'array: vùng dữ liệu; row_num: vị trí hàng trong vùng (2); column_num: vị trí cột trong vùng (3).',
+        sandboxFunc: 'INDEX_MATCH'
+      },
+      {
+        id: 'match',
+        cat: 'lookup',
+        name: 'MATCH',
+        summary: 'Tìm vị trí tương đối (số thứ tự hàng hoặc cột) của một giá trị trong một hàng hoặc cột.',
+        syntax: '=MATCH(lookup_value, lookup_array, [match_type])',
+        miniTable: {
+          headers: ['A: Môn học', 'B: Thứ tự'],
+          rows: [
+            ['Toán', '1'],
+            ['Tiếng Anh', '2']
+          ]
+        },
+        exampleFormula: '=MATCH("Tiếng Anh", $A$1:$A$2, 0)',
+        output: '2',
+        paramNotes: 'lookup_value: giá trị cần tìm vị trí; lookup_array: 1 cột hoặc 1 hàng; match_type = 0: tìm chính xác.',
+        sandboxFunc: 'INDEX_MATCH'
+      },
+      {
+        id: 'index-match',
+        cat: 'lookup',
+        name: 'INDEX + MATCH',
+        summary: 'Cặp hàm dò tìm linh hoạt: dò được cột bên trái, dò 2 chiều theo hàng & cột và không hỏng khi chèn/xóa cột.',
+        syntax: '=INDEX(return_range, MATCH(lookup_val, lookup_range, 0))',
+        miniTable: {
+          headers: ['A: Mã', 'B: Tên SP', 'C: Tồn'],
+          rows: [
+            ['M1', 'Áo thun', '40'],
+            ['M2', 'Quần jeans', '25']
+          ]
+        },
+        exampleFormula: '=INDEX($A$2:$A$3, MATCH("Quần jeans", $B$2:$B$3, 0))',
+        output: 'M2',
+        paramNotes: 'MATCH tìm số hàng chứa "Quần jeans" ở cột B, sau đó INDEX trả về mã tương ứng ở cột A bên trái.',
+        sandboxFunc: 'INDEX_MATCH'
+      },
+      {
+        id: 'offset',
+        cat: 'lookup',
+        name: 'OFFSET',
+        summary: 'Trả về tham chiếu đến một ô hoặc vùng ô dịch chuyển theo số hàng và số cột tính từ ô gốc.',
+        syntax: '=OFFSET(reference, rows, cols, [height], [width])',
+        miniTable: {
+          headers: ['A1: Gốc', 'B1', 'C1'],
+          rows: [
+            ['100', '200', '300'],
+            ['400', '500', '600']
+          ]
+        },
+        exampleFormula: '=OFFSET(A1, 1, 2)',
+        output: '600',
+        paramNotes: 'reference: ô gốc (A1); rows: số hàng dịch xuống (+)/lên (-); cols: số cột dịch phải (+)/trái (-).',
+        sandboxFunc: 'VLOOKUP'
+      },
+      {
+        id: 'indirect',
+        cat: 'lookup',
+        name: 'INDIRECT',
+        summary: 'Chuyển đổi một chuỗi văn bản có dạng địa chỉ ô hoặc tên vùng thành tham chiếu ô thực tế.',
+        syntax: '=INDIRECT(ref_text, [a1])',
+        miniTable: {
+          headers: ['A1: Tên ô', 'B1: Dữ liệu'],
+          rows: [
+            ['C2', 'Thành công'],
+            ['C2 (giá trị)', 'Thành công']
+          ]
+        },
+        exampleFormula: '=INDIRECT(A1)',
+        output: 'Thành công',
+        paramNotes: 'ref_text: chuỗi địa chỉ ô (ví dụ "C2" hoặc "Sheet2!B5"); a1 = TRUE (mặc định) dùng kiểu tham chiếu A1.',
+        sandboxFunc: 'VLOOKUP'
+      },
+
+      // ==================== NHÓM 2: LOGIC & ĐIỀU KIỆN ====================
+      {
+        id: 'if',
+        cat: 'logic',
+        name: 'IF',
+        summary: 'Kiểm tra một điều kiện logic và trả về một giá trị nếu ĐÚNG (TRUE), giá trị khác nếu SAI (FALSE).',
+        syntax: '=IF(logical_test, value_if_true, [value_if_false])',
+        miniTable: {
+          headers: ['A: Điểm', 'B: Kết quả'],
+          rows: [
+            ['8.5', 'Đạt'],
+            ['4.0', 'Trượt']
+          ]
+        },
+        exampleFormula: '=IF(A2>=5, "Đạt", "Trượt")',
+        output: 'Đạt',
+        paramNotes: 'logical_test: điều kiện so sánh (A2>=5); value_if_true: kết quả khi đúng; value_if_false: kết quả khi sai.',
+        sandboxFunc: 'IF'
+      },
+      {
+        id: 'ifs',
+        cat: 'logic',
+        name: 'IFS',
+        summary: 'Kiểm tra tuần tự nhiều điều kiện độc lập và trả về giá trị ứng với điều kiện ĐÚNG đầu tiên (gọn hơn IF lồng nhau).',
+        syntax: '=IFS(condition1, value1, [condition2, value2], ...)',
+        miniTable: {
+          headers: ['A: Điểm', 'B: Xếp loại'],
+          rows: [
+            ['9.0', 'Giỏi'],
+            ['7.5', 'Khá']
+          ]
+        },
+        exampleFormula: '=IFS(A2>=8.5, "Giỏi", A2>=7, "Khá", A2>=5, "Đạt")',
+        output: 'Giỏi',
+        paramNotes: 'Nhập từng cặp điều kiện và giá trị tương ứng; nên đặt điều kiện chặt/cao nhất trước và có thể thêm TRUE làm nhánh mặc định cuối cùng.',
+        sandboxFunc: 'IF'
+      },
+      {
+        id: 'and',
+        cat: 'logic',
+        name: 'AND',
+        summary: 'Trả về TRUE chỉ khi TẤT CẢ các điều kiện bên trong đều đúng; chỉ cần 1 điều kiện sai sẽ trả về FALSE.',
+        syntax: '=AND(logical1, [logical2], ...)',
+        miniTable: {
+          headers: ['A: Doanh số', 'B: KPI'],
+          rows: [
+            ['120M', '95'],
+            ['120M', '70']
+          ]
+        },
+        exampleFormula: '=AND(A2>=100, B2>=80)',
+        output: 'TRUE',
+        paramNotes: 'logical1, logical2,...: các biểu thức logic cần thỏa mãn đồng thời (thường lồng trong hàm IF).',
+        sandboxFunc: 'IF'
+      },
+      {
+        id: 'or',
+        cat: 'logic',
+        name: 'OR',
+        summary: 'Trả về TRUE nếu CÓ ÍT NHẤT MỘT điều kiện đúng; chỉ trả về FALSE khi tất cả điều kiện đều sai.',
+        syntax: '=OR(logical1, [logical2], ...)',
+        miniTable: {
+          headers: ['A: VIP', 'B: Đơn hàng'],
+          rows: [
+            ['Có', '300,000'],
+            ['Không', '200,000']
+          ]
+        },
+        exampleFormula: '=OR(A2="Có", B2>=500000)',
+        output: 'TRUE',
+        paramNotes: 'Trả về TRUE ngay khi một trong các điều kiện đạt; nếu toàn bộ sai mới trả về FALSE.',
+        sandboxFunc: 'IF'
+      },
+      {
+        id: 'not',
+        cat: 'logic',
+        name: 'NOT',
+        summary: 'Đảo ngược giá trị logic: biến TRUE thành FALSE và biến FALSE thành TRUE.',
+        syntax: '=NOT(logical)',
+        miniTable: {
+          headers: ['A: Đã khóa', 'B: Đảo ngược'],
+          rows: [
+            ['FALSE', 'TRUE'],
+            ['TRUE', 'FALSE']
+          ]
+        },
+        exampleFormula: '=NOT(A2="Đã khóa")',
+        output: 'TRUE',
+        paramNotes: 'logical: biểu thức hoặc giá trị logic cần đảo ngược.',
+        sandboxFunc: 'IF'
+      },
+      {
+        id: 'iferror',
+        cat: 'logic',
+        name: 'IFERROR',
+        summary: 'Bắt mọi lỗi công thức (#N/A, #VALUE!, #REF!, #DIV/0!, #NAME?...) và trả về giá trị thay thế gọn đẹp.',
+        syntax: '=IFERROR(value, value_if_error)',
+        miniTable: {
+          headers: ['A: Doanh thu', 'B: SL đơn'],
+          rows: [
+            ['5,000,000', '0'],
+            ['8,000,000', '4']
+          ]
+        },
+        exampleFormula: '=IFERROR(A2/B2, 0)',
+        output: '0',
+        paramNotes: 'value: công thức hoặc phép tính có thể gây lỗi; value_if_error: giá trị trả về nếu xảy ra lỗi.',
+        sandboxFunc: 'VLOOKUP'
+      },
+      {
+        id: 'switch',
+        cat: 'logic',
+        name: 'SWITCH',
+        summary: 'So sánh một biểu thức/giá trị với danh sách các trường hợp khớp chính xác và trả về kết quả tương ứng.',
+        syntax: '=SWITCH(expression, value1, result1, [default_or_value2, result2], ...)',
+        miniTable: {
+          headers: ['A: Mã cấp', 'B: Phụ cấp'],
+          rows: [
+            ['L1', '1,000,000'],
+            ['L2', '2,500,000']
+          ]
+        },
+        exampleFormula: '=SWITCH(A2, "L1", 1000000, "L2", 2500000, 0)',
+        output: '1,000,000',
+        paramNotes: 'expression: giá trị đem so sánh; các cặp value/result: giá trị khớp và kết quả; tham số cuối cùng (nếu lẻ) là giá trị mặc định.',
+        sandboxFunc: 'IF'
+      },
+
+      // ==================== NHÓM 3: THỐNG KÊ & ĐIỀU KIỆN ====================
+      {
+        id: 'sum',
+        cat: 'stats',
+        name: 'SUM',
+        summary: 'Tính tổng tất cả các số trong một hoặc nhiều ô, vùng dữ liệu.',
+        syntax: '=SUM(number1, [number2], ...)',
+        miniTable: {
+          headers: ['A: T1', 'B: T2', 'C: T3'],
+          rows: [
+            ['10', '20', '30'],
+            ['5', '15', '25']
+          ]
+        },
+        exampleFormula: '=SUM(A2:C2)',
+        output: '60',
+        paramNotes: 'number1, number2,...: các số, ô hoặc vùng ô cần cộng tổng (tự động bỏ qua ô trống và văn bản).',
+        sandboxFunc: 'SUMIFS'
+      },
+      {
+        id: 'average',
+        cat: 'stats',
+        name: 'AVERAGE',
+        summary: 'Tính trung bình cộng của các giá trị số trong vùng dữ liệu đã chọn.',
+        syntax: '=AVERAGE(number1, [number2], ...)',
+        miniTable: {
+          headers: ['A: Điểm 1', 'B: Điểm 2', 'C: Điểm 3'],
+          rows: [
+            ['7', '8', '9'],
+            ['6', '8', '10']
+          ]
+        },
+        exampleFormula: '=AVERAGE(A2:C2)',
+        output: '8',
+        paramNotes: 'Chỉ tính trên các ô chứa số; ô trống hoặc chữ không tính vào mẫu số chia trung bình.',
+        sandboxFunc: 'AVERAGEIF'
+      },
+      {
+        id: 'count',
+        cat: 'stats',
+        name: 'COUNT',
+        summary: 'Đếm số lượng ô chứa giá trị số (bao gồm cả ngày tháng lưu dưới dạng số) trong vùng chọn.',
+        syntax: '=COUNT(value1, [value2], ...)',
+        miniTable: {
+          headers: ['A1', 'A2', 'A3', 'A4'],
+          rows: [
+            ['100', 'Hết', '250', ''],
+            ['Số: 2', 'Chữ: 1', 'Trống: 1', '']
+          ]
+        },
+        exampleFormula: '=COUNT(A1:A4)',
+        output: '2',
+        paramNotes: 'Chỉ đếm ô có dữ liệu số; bỏ qua ô trống, lỗi và chuỗi văn bản thuần.',
+        sandboxFunc: 'COUNTIFS'
+      },
+      {
+        id: 'counta',
+        cat: 'stats',
+        name: 'COUNTA',
+        summary: 'Đếm tất cả các ô không rỗng (bao gồm số, chữ, ngày tháng, lỗi, chuỗi rỗng "").',
+        syntax: '=COUNTA(value1, [value2], ...)',
+        miniTable: {
+          headers: ['A1', 'A2', 'A3', 'A4'],
+          rows: [
+            ['SP01', 'Chuột', '250000', ''],
+            ['Có 3 ô không trống', '', '', '']
+          ]
+        },
+        exampleFormula: '=COUNTA(A1:A4)',
+        output: '3',
+        paramNotes: 'Dùng để kiểm tra số lượng bản ghi hoặc ô đã được nhập liệu.',
+        sandboxFunc: 'COUNTIFS'
+      },
+      {
+        id: 'countblank',
+        cat: 'stats',
+        name: 'COUNTBLANK',
+        summary: 'Đếm số lượng ô trống (hoặc trả về chuỗi rỗng "") trong một vùng dữ liệu.',
+        syntax: '=COUNTBLANK(range)',
+        miniTable: {
+          headers: ['A1', 'A2', 'A3', 'A4'],
+          rows: [
+            ['NV01', '', 'NV03', ''],
+            ['Có 2 ô trống', '', '', '']
+          ]
+        },
+        exampleFormula: '=COUNTBLANK(A1:A4)',
+        output: '2',
+        paramNotes: 'range: vùng ô cần đếm số ô trống; hữu ích khi rà soát dữ liệu thiếu.',
+        sandboxFunc: 'COUNTIFS'
+      },
+      {
+        id: 'min',
+        cat: 'stats',
+        name: 'MIN',
+        summary: 'Tìm giá trị số nhỏ nhất trong một tập hợp giá trị hoặc vùng ô.',
+        syntax: '=MIN(number1, [number2], ...)',
+        miniTable: {
+          headers: ['A: Giá 1', 'B: Giá 2', 'C: Giá 3'],
+          rows: [
+            ['450,000', '320,000', '590,000'],
+            ['Nhỏ nhất:', '320,000', '']
+          ]
+        },
+        exampleFormula: '=MIN(A2:C2)',
+        output: '320,000',
+        paramNotes: 'Trả về số nhỏ nhất trong danh sách tham số; bỏ qua ô trống và chữ.',
+        sandboxFunc: 'SUMIFS'
+      },
+      {
+        id: 'max',
+        cat: 'stats',
+        name: 'MAX',
+        summary: 'Tìm giá trị số lớn nhất trong một tập hợp giá trị hoặc vùng ô.',
+        syntax: '=MAX(number1, [number2], ...)',
+        miniTable: {
+          headers: ['A: Giá 1', 'B: Giá 2', 'C: Giá 3'],
+          rows: [
+            ['450,000', '320,000', '590,000'],
+            ['Lớn nhất:', '590,000', '']
+          ]
+        },
+        exampleFormula: '=MAX(A2:C2)',
+        output: '590,000',
+        paramNotes: 'Trả về số lớn nhất trong danh sách tham số; bỏ qua ô trống và chữ.',
+        sandboxFunc: 'SUMIFS'
+      },
+      {
+        id: 'sumif',
+        cat: 'stats',
+        name: 'SUMIF',
+        summary: 'Tính tổng các giá trị trong vùng tính tổng thỏa mãn 1 điều kiện cho trước.',
+        syntax: '=SUMIF(range, criteria, [sum_range])',
+        miniTable: {
+          headers: ['A: Danh mục', 'B: Thành tiền'],
+          rows: [
+            ['Phụ kiện', '300,000'],
+            ['Màn hình', '4,500,000'],
+            ['Phụ kiện', '200,000']
+          ]
+        },
+        exampleFormula: '=SUMIF(A2:A4, "Phụ kiện", B2:B4)',
+        output: '500,000',
+        paramNotes: 'range: vùng xét điều kiện; criteria: điều kiện ("Phụ kiện", ">100", ô tham chiếu); sum_range: vùng cộng tổng.',
+        sandboxFunc: 'SUMIFS'
+      },
+      {
+        id: 'sumifs',
+        cat: 'stats',
+        name: 'SUMIFS',
+        summary: 'Tính tổng các ô thỏa mãn ĐỒNG THỜI nhiều điều kiện (lưu ý: sum_range nằm ở tham số đầu tiên).',
+        syntax: '=SUMIFS(sum_range, criteria_range1, criteria1, [criteria_range2, criteria2], ...)',
+        miniTable: {
+          headers: ['A: Vùng', 'B: Loại', 'C: Doanh thu'],
+          rows: [
+            ['HCM', 'Sỉ', '50M'],
+            ['HCM', 'Lẻ', '20M'],
+            ['HCM', 'Sỉ', '30M']
+          ]
+        },
+        exampleFormula: '=SUMIFS(C2:C4, A2:A4, "HCM", B2:B4, "Sỉ")',
+        output: '80M',
+        paramNotes: 'sum_range: vùng cần tính tổng; tiếp theo là từng cặp (vùng điều kiện, điều kiện).',
+        sandboxFunc: 'SUMIFS'
+      },
+      {
+        id: 'countif',
+        cat: 'stats',
+        name: 'COUNTIF',
+        summary: 'Đếm số ô trong một vùng thỏa mãn 1 điều kiện xác định.',
+        syntax: '=COUNTIF(range, criteria)',
+        miniTable: {
+          headers: ['A: Trạng thái'],
+          rows: [
+            ['Còn hàng'],
+            ['Hết hàng'],
+            ['Còn hàng']
+          ]
+        },
+        exampleFormula: '=COUNTIF(A2:A4, "Còn hàng")',
+        output: '2',
+        paramNotes: 'range: vùng cần đếm; criteria: điều kiện dạng chuỗi, số hoặc biểu thức có ký tự đại diện (*, ?).',
+        sandboxFunc: 'COUNTIFS'
+      },
+      {
+        id: 'countifs',
+        cat: 'stats',
+        name: 'COUNTIFS',
+        summary: 'Đếm số bản ghi/ô thỏa mãn đồng thời nhiều điều kiện trên các vùng khác nhau.',
+        syntax: '=COUNTIFS(criteria_range1, criteria1, [criteria_range2, criteria2], ...)',
+        miniTable: {
+          headers: ['A: Danh mục', 'B: Tồn kho'],
+          rows: [
+            ['Laptop', '15'],
+            ['Laptop', '0'],
+            ['Laptop', '8']
+          ]
+        },
+        exampleFormula: '=COUNTIFS(A2:A4, "Laptop", B2:B4, ">0")',
+        output: '2',
+        paramNotes: 'Mỗi cặp tham số gồm 1 vùng điều kiện và 1 điều kiện; các vùng phải có cùng kích thước.',
+        sandboxFunc: 'COUNTIFS'
+      },
+      {
+        id: 'averageif',
+        cat: 'stats',
+        name: 'AVERAGEIF',
+        summary: 'Tính trung bình cộng các giá trị thỏa mãn 1 điều kiện cho trước.',
+        syntax: '=AVERAGEIF(range, criteria, [average_range])',
+        miniTable: {
+          headers: ['A: Nhóm', 'B: Giá bán'],
+          rows: [
+            ['Audio', '400,000'],
+            ['Audio', '600,000'],
+            ['Key', '1,000,000']
+          ]
+        },
+        exampleFormula: '=AVERAGEIF(A2:A4, "Audio", B2:B4)',
+        output: '500,000',
+        paramNotes: 'range: vùng xét điều kiện; criteria: điều kiện; average_range: vùng tính trung bình (nếu bỏ qua sẽ lấy trung bình chính range).',
+        sandboxFunc: 'AVERAGEIF'
+      },
+      {
+        id: 'averageifs',
+        cat: 'stats',
+        name: 'AVERAGEIFS',
+        summary: 'Tính trung bình cộng các ô thỏa mãn đồng thời nhiều điều kiện.',
+        syntax: '=AVERAGEIFS(average_range, criteria_range1, criteria1, [criteria_range2, criteria2], ...)',
+        miniTable: {
+          headers: ['A: Khu vực', 'B: Đạt', 'C: Điểm'],
+          rows: [
+            ['HN', 'Có', '8.0'],
+            ['HN', 'Có', '9.0'],
+            ['HN', 'Không', '5.0']
+          ]
+        },
+        exampleFormula: '=AVERAGEIFS(C2:C4, A2:A4, "HN", B2:B4, "Có")',
+        output: '8.5',
+        paramNotes: 'average_range: vùng tính trung bình; theo sau là các cặp vùng điều kiện và điều kiện.',
+        sandboxFunc: 'AVERAGEIF'
+      },
+
+      // ==================== NHÓM 4: VĂN BẢN / CHUỖI ====================
+      {
+        id: 'left',
+        cat: 'text',
+        name: 'LEFT',
+        summary: 'Trích xuất một số lượng ký tự nhất định tính từ bên trái của chuỗi văn bản.',
+        syntax: '=LEFT(text, [num_chars])',
+        miniTable: {
+          headers: ['A: Mã đơn'],
+          rows: [
+            ['VN-2026-001'],
+            ['2 ký tự trái: VN']
+          ]
+        },
+        exampleFormula: '=LEFT(A2, 2)',
+        output: 'VN',
+        paramNotes: 'text: chuỗi gốc; num_chars: số ký tự muốn lấy từ trái sang (mặc định là 1).',
+        sandboxFunc: 'TEXTJOIN'
+      },
+      {
+        id: 'right',
+        cat: 'text',
+        name: 'RIGHT',
+        summary: 'Trích xuất một số lượng ký tự nhất định tính từ bên phải của chuỗi văn bản.',
+        syntax: '=RIGHT(text, [num_chars])',
+        miniTable: {
+          headers: ['A: Mã đơn'],
+          rows: [
+            ['VN-2026-001'],
+            ['3 ký tự phải: 001']
+          ]
+        },
+        exampleFormula: '=RIGHT(A2, 3)',
+        output: '001',
+        paramNotes: 'text: chuỗi gốc; num_chars: số ký tự muốn lấy từ phải sang (mặc định là 1).',
+        sandboxFunc: 'TEXTJOIN'
+      },
+      {
+        id: 'mid',
+        cat: 'text',
+        name: 'MID',
+        summary: 'Trích xuất chuỗi con bắt đầu từ vị trí bất kỳ ở giữa chuỗi với độ dài xác định.',
+        syntax: '=MID(text, start_num, num_chars)',
+        miniTable: {
+          headers: ['A: Mã đơn'],
+          rows: [
+            ['VN-2026-001'],
+            ['Từ vị trí 4, lấy 4: 2026']
+          ]
+        },
+        exampleFormula: '=MID(A2, 4, 4)',
+        output: '2026',
+        paramNotes: 'text: chuỗi gốc; start_num: vị trí ký tự bắt đầu (tính từ 1); num_chars: số ký tự cần lấy.',
+        sandboxFunc: 'TEXTJOIN'
+      },
+      {
+        id: 'len',
+        cat: 'text',
+        name: 'LEN',
+        summary: 'Đếm tổng số ký tự của một chuỗi văn bản (tính cả dấu cách và ký tự đặc biệt).',
+        syntax: '=LEN(text)',
+        miniTable: {
+          headers: ['A: Mã SKU'],
+          rows: [
+            ['SKU-01'],
+            ['Độ dài: 6']
+          ]
+        },
+        exampleFormula: '=LEN(A2)',
+        output: '6',
+        paramNotes: 'text: chuỗi hoặc ô cần đếm ký tự; thường dùng kết hợp LEFT/RIGHT/FIND để tách chuỗi.',
+        sandboxFunc: 'TEXTJOIN'
+      },
+      {
+        id: 'trim',
+        cat: 'text',
+        name: 'TRIM',
+        summary: 'Xóa khoảng trắng dư thừa ở đầu và cuối chuỗi, đồng thời rút gọn nhiều khoảng trắng liên tiếp ở giữa thành 1 dấu cách.',
+        syntax: '=TRIM(text)',
+        miniTable: {
+          headers: ['A: Tên nhập thô'],
+          rows: [
+            ['  Nguyễn   Văn  An  '],
+            ['Nguyễn Văn An']
+          ]
+        },
+        exampleFormula: '=TRIM(A2)',
+        output: 'Nguyễn Văn An',
+        paramNotes: 'Rất hữu ích khi làm sạch dữ liệu copy từ web/ERP trước khi dùng VLOOKUP hoặc so sánh.',
+        sandboxFunc: 'TEXTJOIN'
+      },
+      {
+        id: 'concat',
+        cat: 'text',
+        name: 'CONCAT / CONCATENATE',
+        summary: 'Nối nhiều chuỗi văn bản hoặc vùng dữ liệu lại với nhau (CONCAT hỗ trợ cả vùng ô trên Excel mới/Google Sheets).',
+        syntax: '=CONCAT(text1, [text2], ...)',
+        miniTable: {
+          headers: ['A: Họ', 'B: Tên'],
+          rows: [
+            ['Trần', 'Minh'],
+            ['Nối: TrầnMinh']
+          ]
+        },
+        exampleFormula: '=CONCAT(A2, B2)',
+        output: 'TrầnMinh',
+        paramNotes: 'Nếu muốn có dấu cách hoặc dấu gạch ngang giữa các phần, hãy thêm chuỗi phân cách như " " hoặc "-".',
+        sandboxFunc: 'TEXTJOIN'
+      },
+      {
+        id: 'textjoin',
+        cat: 'text',
+        name: 'TEXTJOIN',
+        summary: 'Nối nhiều ô/vùng dữ liệu bằng một ký tự phân cách chung và có tùy chọn bỏ qua ô trống.',
+        syntax: '=TEXTJOIN(delimiter, ignore_empty, text1, [text2], ...)',
+        miniTable: {
+          headers: ['A: Tag 1', 'B: Tag 2', 'C: Tag 3'],
+          rows: [
+            ['Mới', '', 'Hot'],
+            ['Kết quả: Mới, Hot']
+          ]
+        },
+        exampleFormula: '=TEXTJOIN(", ", TRUE, A2:C2)',
+        output: 'Mới, Hot',
+        paramNotes: 'delimiter: ký tự ngăn cách (", "); ignore_empty = TRUE: bỏ qua ô trống; text1...: các chuỗi hoặc vùng nối.',
+        sandboxFunc: 'TEXTJOIN'
+      },
+      {
+        id: 'substitute',
+        cat: 'text',
+        name: 'SUBSTITUTE',
+        summary: 'Thay thế một đoạn văn bản cụ thể bằng văn bản mới trong chuỗi (có thể chọn thay tất cả hoặc chỉ lần xuất hiện thứ n).',
+        syntax: '=SUBSTITUTE(text, old_text, new_text, [instance_num])',
+        miniTable: {
+          headers: ['A: Số điện thoại'],
+          rows: [
+            ['090-123-456'],
+            ['090123456']
+          ]
+        },
+        exampleFormula: '=SUBSTITUTE(A2, "-", "")',
+        output: '090123456',
+        paramNotes: 'old_text: đoạn chữ cần thay; new_text: chữ thay thế; instance_num: số lần xuất hiện cần đổi (bỏ qua để đổi tất cả).',
+        sandboxFunc: 'TEXTJOIN'
+      },
+      {
+        id: 'replace',
+        cat: 'text',
+        name: 'REPLACE',
+        summary: 'Thay thế một đoạn ký tự dựa trên VỊ TRÍ bắt đầu và SỐ LƯỢNG ký tự của chuỗi gốc.',
+        syntax: '=REPLACE(old_text, start_num, num_chars, new_text)',
+        miniTable: {
+          headers: ['A: Mã thẻ'],
+          rows: [
+            ['1234-5678'],
+            ['****-5678']
+          ]
+        },
+        exampleFormula: '=REPLACE(A2, 1, 4, "****")',
+        output: '****-5678',
+        paramNotes: 'Khác SUBSTITUTE (tìm theo nội dung chữ), REPLACE thay theo vị trí start_num và độ dài num_chars.',
+        sandboxFunc: 'TEXTJOIN'
+      },
+      {
+        id: 'find',
+        cat: 'text',
+        name: 'FIND',
+        summary: 'Tìm vị trí ký tự đầu tiên của chuỗi con trong chuỗi lớn (CÓ phân biệt chữ hoa/thường, không hỗ trợ ký tự đại diện).',
+        syntax: '=FIND(find_text, within_text, [start_num])',
+        miniTable: {
+          headers: ['A: Email'],
+          rows: [
+            ['nam.tran@gmail.com'],
+            ['Vị trí "@": 9']
+          ]
+        },
+        exampleFormula: '=FIND("@", A2)',
+        output: '9',
+        paramNotes: 'find_text: chuỗi cần tìm; within_text: chuỗi gốc; start_num: vị trí bắt đầu dò (mặc định 1).',
+        sandboxFunc: 'TEXTJOIN'
+      },
+      {
+        id: 'search',
+        cat: 'text',
+        name: 'SEARCH',
+        summary: 'Tìm vị trí ký tự đầu tiên của chuỗi con trong chuỗi lớn (KHÔNG phân biệt hoa/thường và hỗ trợ ký tự đại diện *, ?).',
+        syntax: '=SEARCH(find_text, within_text, [start_num])',
+        miniTable: {
+          headers: ['A: Tiêu đề'],
+          rows: [
+            ['Báo cáo Excel 2026'],
+            ['Vị trí "excel": 9']
+          ]
+        },
+        exampleFormula: '=SEARCH("excel", A2)',
+        output: '9',
+        paramNotes: 'Tương tự FIND nhưng không phân biệt chữ hoa/thường; trả về #VALUE! nếu không tìm thấy.',
+        sandboxFunc: 'TEXTJOIN'
+      },
+      {
+        id: 'upper',
+        cat: 'text',
+        name: 'UPPER',
+        summary: 'Chuyển toàn bộ chữ cái trong chuỗi sang CHỮ IN HOA.',
+        syntax: '=UPPER(text)',
+        miniTable: {
+          headers: ['A: Mã vùng'],
+          rows: [
+            ['hcm-01'],
+            ['HCM-01']
+          ]
+        },
+        exampleFormula: '=UPPER(A2)',
+        output: 'HCM-01',
+        paramNotes: 'text: chuỗi văn bản cần chuyển thành chữ hoa.',
+        sandboxFunc: 'TEXTJOIN'
+      },
+      {
+        id: 'lower',
+        cat: 'text',
+        name: 'LOWER',
+        summary: 'Chuyển toàn bộ chữ cái trong chuỗi sang chữ thường.',
+        syntax: '=LOWER(text)',
+        miniTable: {
+          headers: ['A: Email'],
+          rows: [
+            ['Admin@Company.VN'],
+            ['admin@company.vn']
+          ]
+        },
+        exampleFormula: '=LOWER(A2)',
+        output: 'admin@company.vn',
+        paramNotes: 'text: chuỗi văn bản cần chuyển sang chữ thường (rất hay dùng khi chuẩn hóa email).',
+        sandboxFunc: 'TEXTJOIN'
+      },
+      {
+        id: 'proper',
+        cat: 'text',
+        name: 'PROPER',
+        summary: 'Viết hoa chữ cái đầu tiên của mỗi từ trong chuỗi văn bản và chuyển các chữ còn lại thành chữ thường.',
+        syntax: '=PROPER(text)',
+        miniTable: {
+          headers: ['A: Họ tên'],
+          rows: [
+            ['nguyễn thị mai'],
+            ['Nguyễn Thị Mai']
+          ]
+        },
+        exampleFormula: '=PROPER(A2)',
+        output: 'Nguyễn Thị Mai',
+        paramNotes: 'text: chuỗi cần viết hoa đầu từ; dùng nhanh cho danh sách họ tên hoặc tên sản phẩm.',
+        sandboxFunc: 'TEXTJOIN'
+      },
+      {
+        id: 'text',
+        cat: 'text',
+        name: 'TEXT',
+        summary: 'Định dạng một số hoặc ngày tháng thành chuỗi văn bản theo mẫu định dạng tùy chỉnh.',
+        syntax: '=TEXT(value, format_text)',
+        miniTable: {
+          headers: ['A: Ngày / Số'],
+          rows: [
+            ['2026-11-23'],
+            ['23/11/2026']
+          ]
+        },
+        exampleFormula: '=TEXT(A2, "dd/mm/yyyy")',
+        output: '23/11/2026',
+        paramNotes: 'value: số hoặc ngày; format_text: mẫu định dạng như "#,##0", "dd/mm/yyyy", "mmmm" (tháng).',
+        sandboxFunc: 'ROUND'
+      },
+      {
+        id: 'value',
+        cat: 'text',
+        name: 'VALUE',
+        summary: 'Chuyển đổi một chuỗi văn bản biểu diễn số (ví dụ "150000") thành giá trị số thực để tính toán.',
+        syntax: '=VALUE(text)',
+        miniTable: {
+          headers: ['A: Chuỗi số'],
+          rows: [
+            ['"250000"'],
+            ['250000 (số)']
+          ]
+        },
+        exampleFormula: '=VALUE(A2)',
+        output: '250000',
+        paramNotes: 'text: chuỗi đại diện cho số; khắc phục tình trạng số bị lưu dạng text không cộng trừ được.',
+        sandboxFunc: 'ROUND'
+      },
+
+      // ==================== NHÓM 5: NGÀY & GIỜ ====================
+      {
+        id: 'today',
+        cat: 'date',
+        name: 'TODAY',
+        summary: 'Trả về ngày hiện tại theo đồng hồ hệ thống (tự cập nhật mỗi khi mở lại hoặc tính toán lại bảng tính).',
+        syntax: '=TODAY()',
+        miniTable: {
+          headers: ['Hàm', 'Giá trị trả về'],
+          rows: [
+            ['=TODAY()', 'Ngày hôm nay (dd/mm/yyyy)']
+          ]
+        },
+        exampleFormula: '=TODAY()',
+        output: 'Ngày hiện tại',
+        paramNotes: 'Không có tham số; thường dùng để tính số ngày quá hạn, tuổi hoặc thâm niên.',
+        sandboxFunc: 'IF'
+      },
+      {
+        id: 'now',
+        cat: 'date',
+        name: 'NOW',
+        summary: 'Trả về cả ngày và giờ phút giây hiện tại theo hệ thống.',
+        syntax: '=NOW()',
+        miniTable: {
+          headers: ['Hàm', 'Giá trị trả về'],
+          rows: [
+            ['=NOW()', 'Ngày & Giờ hiện tại']
+          ]
+        },
+        exampleFormula: '=NOW()',
+        output: 'Ngày & Giờ hiện tại',
+        paramNotes: 'Không có tham số; định dạng ô theo kiểu Date/Time để hiển thị đầy đủ ngày và giờ.',
+        sandboxFunc: 'IF'
+      },
+      {
+        id: 'date',
+        cat: 'date',
+        name: 'DATE',
+        summary: 'Tạo giá trị ngày tháng hợp lệ từ 3 thành phần riêng biệt: Năm, Tháng, Ngày.',
+        syntax: '=DATE(year, month, day)',
+        miniTable: {
+          headers: ['A: Năm', 'B: Tháng', 'C: Ngày'],
+          rows: [
+            ['2026', '11', '23'],
+            ['23/11/2026', '', '']
+          ]
+        },
+        exampleFormula: '=DATE(A2, B2, C2)',
+        output: '23/11/2026',
+        paramNotes: 'year: số năm; month: số tháng (1-12, nếu vượt 12 sẽ tự cộng sang năm sau); day: số ngày.',
+        sandboxFunc: 'IF'
+      },
+      {
+        id: 'year',
+        cat: 'date',
+        name: 'YEAR',
+        summary: 'Trích xuất số năm (4 chữ số) từ một giá trị ngày tháng.',
+        syntax: '=YEAR(serial_number)',
+        miniTable: {
+          headers: ['A: Ngày nhập'],
+          rows: [
+            ['15/08/2026'],
+            ['2026']
+          ]
+        },
+        exampleFormula: '=YEAR(A2)',
+        output: '2026',
+        paramNotes: 'serial_number: ô hoặc giá trị ngày tháng hợp lệ của Excel.',
+        sandboxFunc: 'IF'
+      },
+      {
+        id: 'month',
+        cat: 'date',
+        name: 'MONTH',
+        summary: 'Trích xuất số tháng (từ 1 đến 12) từ một giá trị ngày tháng.',
+        syntax: '=MONTH(serial_number)',
+        miniTable: {
+          headers: ['A: Ngày nhập'],
+          rows: [
+            ['15/08/2026'],
+            ['8']
+          ]
+        },
+        exampleFormula: '=MONTH(A2)',
+        output: '8',
+        paramNotes: 'serial_number: giá trị ngày tháng; rất hay dùng để lọc hoặc tổng hợp báo cáo theo tháng.',
+        sandboxFunc: 'IF'
+      },
+      {
+        id: 'day',
+        cat: 'date',
+        name: 'DAY',
+        summary: 'Trích xuất ngày trong tháng (từ 1 đến 31) từ một giá trị ngày tháng.',
+        syntax: '=DAY(serial_number)',
+        miniTable: {
+          headers: ['A: Ngày nhập'],
+          rows: [
+            ['15/08/2026'],
+            ['15']
+          ]
+        },
+        exampleFormula: '=DAY(A2)',
+        output: '15',
+        paramNotes: 'serial_number: giá trị ngày tháng hợp lệ.',
+        sandboxFunc: 'IF'
+      },
+      {
+        id: 'datedif',
+        cat: 'date',
+        name: 'DATEDIF',
+        summary: 'Tính khoảng cách thời gian giữa ngày bắt đầu và ngày kết thúc theo đơn vị năm ("Y"), tháng ("M") hoặc ngày ("D").',
+        syntax: '=DATEDIF(start_date, end_date, unit)',
+        miniTable: {
+          headers: ['A: Vào làm', 'B: Hiện tại'],
+          rows: [
+            ['01/01/2022', '01/01/2026'],
+            ['Số năm ("Y"):', '4']
+          ]
+        },
+        exampleFormula: '=DATEDIF(A2, B2, "Y")',
+        output: '4',
+        paramNotes: 'start_date <= end_date; unit: "Y" (năm tròn), "M" (tháng tròn), "D" (tổng số ngày), "YM" (tháng lẻ sau khi trừ năm).',
+        sandboxFunc: 'IF'
+      },
+      {
+        id: 'eomonth',
+        cat: 'date',
+        name: 'EOMONTH',
+        summary: 'Trả về ngày cuối cùng của tháng cách ngày bắt đầu một số tháng nhất định (0 = cuối tháng hiện tại).',
+        syntax: '=EOMONTH(start_date, months)',
+        miniTable: {
+          headers: ['A: Ngày', 'B: Số tháng'],
+          rows: [
+            ['10/02/2026', '0'],
+            ['28/02/2026', '']
+          ]
+        },
+        exampleFormula: '=EOMONTH(A2, B2)',
+        output: '28/02/2026',
+        paramNotes: 'start_date: ngày mốc; months: số tháng tới (+) hoặc lùi (-); dùng +1 để lấy ngày mùng 1 tháng kế tiếp.',
+        sandboxFunc: 'IF'
+      },
+      {
+        id: 'workday',
+        cat: 'date',
+        name: 'WORKDAY',
+        summary: 'Tính ngày làm việc (bỏ qua Thứ 7, Chủ nhật và danh sách ngày nghỉ lễ) sau một số ngày làm việc.',
+        syntax: '=WORKDAY(start_date, days, [holidays])',
+        miniTable: {
+          headers: ['A: Ngày bắt đầu', 'B: Số ngày'],
+          rows: [
+            ['20/11/2026 (T6)', '2'],
+            ['24/11/2026 (T3)', '']
+          ]
+        },
+        exampleFormula: '=WORKDAY(A2, B2)',
+        output: '24/11/2026',
+        paramNotes: 'start_date: ngày khởi đầu; days: số ngày làm việc; holidays (tùy chọn): vùng chứa các ngày nghỉ lễ.',
+        sandboxFunc: 'IF'
+      },
+      {
+        id: 'networkdays',
+        cat: 'date',
+        name: 'NETWORKDAYS',
+        summary: 'Đếm tổng số ngày làm việc thực tế (trừ Thứ 7, Chủ nhật và ngày lễ) giữa hai mốc ngày.',
+        syntax: '=NETWORKDAYS(start_date, end_date, [holidays])',
+        miniTable: {
+          headers: ['A: Từ ngày', 'B: Đến ngày'],
+          rows: [
+            ['01/11/2026', '07/11/2026'],
+            ['Ngày làm việc:', '5']
+          ]
+        },
+        exampleFormula: '=NETWORKDAYS(A2, B2)',
+        output: '5',
+        paramNotes: 'start_date: ngày đầu; end_date: ngày cuối (tính cả 2 đầu mút nếu là ngày làm việc); holidays: danh sách ngày lễ.',
+        sandboxFunc: 'IF'
+      },
+
+      // ==================== NHÓM 6: LÀM TRÒN & TOÁN HỌC ====================
+      {
+        id: 'round',
+        cat: 'math',
+        name: 'ROUND',
+        summary: 'Làm tròn số đến số chữ số thập phân chỉ định theo quy tắc thông thường (>= 5 làm tròn lên).',
+        syntax: '=ROUND(number, num_digits)',
+        miniTable: {
+          headers: ['A: Số gốc', 'B: Làm tròn'],
+          rows: [
+            ['1234.567', '1234.57'],
+            ['1234.567', '1200 (num_digits=-2)']
+          ]
+        },
+        exampleFormula: '=ROUND(A2, 2)',
+        output: '1234.57',
+        paramNotes: 'number: số cần làm tròn; num_digits > 0: số lẻ thập phân; = 0: số nguyên; < 0: làm tròn tới hàng chục/trăm/nghìn.',
+        sandboxFunc: 'ROUND'
+      },
+      {
+        id: 'roundup',
+        cat: 'math',
+        name: 'ROUNDUP',
+        summary: 'Luôn làm tròn số LÊN (xa số 0) đến số chữ số chỉ định.',
+        syntax: '=ROUNDUP(number, num_digits)',
+        miniTable: {
+          headers: ['A: Số thùng cần'],
+          rows: [
+            ['4.12'],
+            ['5']
+          ]
+        },
+        exampleFormula: '=ROUNDUP(A2, 0)',
+        output: '5',
+        paramNotes: 'Thường dùng khi tính số thùng hàng, số xe hoặc số nhân sự cần thiết (không thể lẻ 0.12 thùng).',
+        sandboxFunc: 'ROUND'
+      },
+      {
+        id: 'rounddown',
+        cat: 'math',
+        name: 'ROUNDDOWN',
+        summary: 'Luôn làm tròn số XUỐNG (về phía 0) đến số chữ số chỉ định.',
+        syntax: '=ROUNDDOWN(number, num_digits)',
+        miniTable: {
+          headers: ['A: Số dư'],
+          rows: [
+            ['9.99'],
+            ['9']
+          ]
+        },
+        exampleFormula: '=ROUNDDOWN(A2, 0)',
+        output: '9',
+        paramNotes: 'Luôn cắt bỏ phần lẻ vượt quá num_digits mà không làm tròn lên.',
+        sandboxFunc: 'ROUND'
+      },
+      {
+        id: 'int',
+        cat: 'math',
+        name: 'INT',
+        summary: 'Làm tròn số xuống số nguyên gần nhất (về phía âm vô cùng).',
+        syntax: '=INT(number)',
+        miniTable: {
+          headers: ['A: Giá trị'],
+          rows: [
+            ['18.75'],
+            ['18']
+          ]
+        },
+        exampleFormula: '=INT(A2)',
+        output: '18',
+        paramNotes: 'number: số thực cần lấy phần nguyên làm tròn xuống (với số âm như -4.2, INT trả về -5).',
+        sandboxFunc: 'ROUND'
+      },
+      {
+        id: 'mod',
+        cat: 'math',
+        name: 'MOD',
+        summary: 'Trả về số dư của phép chia một số cho số chia (cùng dấu với số chia).',
+        syntax: '=MOD(number, divisor)',
+        miniTable: {
+          headers: ['A: Số chia', 'B: Số bị chia'],
+          rows: [
+            ['10', '3'],
+            ['Số dư:', '1']
+          ]
+        },
+        exampleFormula: '=MOD(A2, B2)',
+        output: '1',
+        paramNotes: 'Rất hay dùng để kiểm tra số chẵn/lẻ (=MOD(A2,2)=0) hoặc tô màu xen kẽ hàng trong Conditional Formatting.',
+        sandboxFunc: 'ROUND'
+      },
+      {
+        id: 'abs',
+        cat: 'math',
+        name: 'ABS',
+        summary: 'Trả về giá trị tuyệt đối của một số (luôn >= 0, bỏ dấu âm).',
+        syntax: '=ABS(number)',
+        miniTable: {
+          headers: ['A: Chênh lệch'],
+          rows: [
+            ['-350,000'],
+            ['350,000']
+          ]
+        },
+        exampleFormula: '=ABS(A2)',
+        output: '350,000',
+        paramNotes: 'number: số thực hoặc ô chứa số cần lấy giá trị tuyệt đối.',
+        sandboxFunc: 'ROUND'
+      },
+      {
+        id: 'large',
+        cat: 'math',
+        name: 'LARGE',
+        summary: 'Trả về giá trị lớn thứ k trong một tập dữ liệu (ví dụ k=1 là lớn nhất, k=2 là lớn thứ hai).',
+        syntax: '=LARGE(array, k)',
+        miniTable: {
+          headers: ['A: Điểm số'],
+          rows: [
+            ['78, 95, 88, 91'],
+            ['Lớn thứ 2 (k=2): 91']
+          ]
+        },
+        exampleFormula: '=LARGE(A2:A5, 2)',
+        output: '91',
+        paramNotes: 'array: vùng dữ liệu số; k: thứ hạng từ cao xuống thấp (1 <= k <= tổng số phần tử).',
+        sandboxFunc: 'SUMIFS'
+      },
+      {
+        id: 'small',
+        cat: 'math',
+        name: 'SMALL',
+        summary: 'Trả về giá trị nhỏ thứ k trong một tập dữ liệu (ví dụ k=1 là nhỏ nhất, k=3 là nhỏ thứ ba).',
+        syntax: '=SMALL(array, k)',
+        miniTable: {
+          headers: ['A: Chi phí'],
+          rows: [
+            ['400, 150, 300, 500'],
+            ['Nhỏ thứ 2 (k=2): 300']
+          ]
+        },
+        exampleFormula: '=SMALL(A2:A5, 2)',
+        output: '300',
+        paramNotes: 'array: vùng dữ liệu số; k: thứ hạng từ thấp lên cao (1 <= k <= tổng số phần tử).',
+        sandboxFunc: 'SUMIFS'
+      },
+      {
+        id: 'rank',
+        cat: 'math',
+        name: 'RANK',
+        summary: 'Xếp hạng của một số trong danh sách các số (mặc định số lớn nhất xếp hạng 1).',
+        syntax: '=RANK(number, ref, [order])',
+        miniTable: {
+          headers: ['A: Điểm SV'],
+          rows: [
+            ['85 (ô A2) trong [70, 85, 95]'],
+            ['Hạng 2']
+          ]
+        },
+        exampleFormula: '=RANK(A2, $A$2:$A$4, 0)',
+        output: '2',
+        paramNotes: 'number: số cần xếp hạng; ref: danh sách so sánh; order = 0 hoặc bỏ qua: giảm dần (cao nhất hạng 1), order = 1: tăng dần.',
+        sandboxFunc: 'ROUND'
+      }
+    ];
+
+    /**
+     * Bảng dữ liệu mẫu ban đầu của Sandbox (có thể chỉnh sửa trực tiếp).
+     */
+    const INITIAL_SANDBOX_ROWS = [
+      { id: 'SP01', name: 'Chuột Logitech M330', category: 'Phụ kiện', price: 320000, stock: 45, date: '2026-10-12', status: 'Còn hàng' },
+      { id: 'SP02', name: 'Bàn phím cơ Keychron K2', category: 'Phụ kiện', price: 1850000, stock: 18, date: '2026-10-18', status: 'Còn hàng' },
+      { id: 'SP03', name: 'Màn hình Dell UltraSharp 24', category: 'Màn hình', price: 4600000, stock: 8, date: '2026-11-02', status: 'Sắp hết' },
+      { id: 'SP04', name: 'Laptop văn phòng 14"', category: 'Laptop', price: 15900000, stock: 6, date: '2026-11-09', status: 'Sắp hết' },
+      { id: 'SP05', name: 'Tai nghe chống ồn Studio', category: 'Phụ kiện', price: 2400000, stock: 0, date: '2026-09-28', status: 'Hết hàng' }
+    ];
+
+    // Trạng thái ứng dụng
+    const appState = {
+      separator: ',',
+      category: 'all',
+      search: '',
+      sandboxRows: JSON.parse(JSON.stringify(INITIAL_SANDBOX_ROWS)),
+      sbFunc: 'VLOOKUP',
+      sbParams: {
+        vlookupId: 'SP02',
+        vlookupCol: 4, // 4: Giá bán, 5: SL Tồn, 2: Tên SP
+        imRowId: 'SP03',
+        imColKey: 'price',
+        ifId: 'SP03',
+        ifThreshold: 10,
+        sumifsCat: 'Phụ kiện',
+        sumifsStatus: 'Còn hàng',
+        countifsCat: 'Phụ kiện',
+        countifsMinStock: 1,
+        avgCat: 'Phụ kiện',
+        joinCat: 'Phụ kiện',
+        roundId: 'SP01',
+        roundRate: 0.925, // hệ số nhân tạo số lẻ như 296,000 hoặc 296,000.4 -> dùng 1.08 (VAT 8%)
+        roundDigits: -3
+      }
+    };
+
+    /**
+     * Hiển thị thông báo toast nhỏ gọn (không dùng alert).
+     */
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-msg');
+      if (!toast || !msgEl) return;
+      msgEl.textContent = message;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 2200);
+    }
+
+    /**
+     * Sao chép chuỗi công thức vào clipboard bằng execCommand kèm fallback an toàn.
+     */
+    function copyFormulaText(text) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        const success = document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast(success ? `Đã sao chép: ${text}` : 'Không thể sao chép tự động.');
+      } catch (e) {
+        showToast('Không thể sao chép công thức.');
+      }
+    }
+
+    /**
+     * Chuyển đổi dấu phân cách tham số (',' hoặc ';') trên chuỗi công thức,
+     * giữ nguyên nội dung bên trong cặp dấu ngoặc kép "...".
+     */
+    function formatSeparator(formula) {
+      if (appState.separator === ',') return formula;
+      let out = '';
+      let insideQuotes = false;
+      for (let i = 0; i < formula.length; i++) {
+        const ch = formula[i];
+        if (ch === '"') {
+          insideQuotes = !insideQuotes;
+          out += ch;
+        } else if (!insideQuotes && ch === ',') {
+          out += ';';
+        } else {
+          out += ch;
+        }
+      }
+      return out;
+    }
+
+    /**
+     * Đổi dấu phân cách toàn trang và render lại các thành phần.
+     */
+    function setSeparator(sep) {
+      appState.separator = sep;
+      const btnComma = document.getElementById('btn-sep-comma');
+      const btnSemi = document.getElementById('btn-sep-semi');
+      const badge = document.getElementById('sep-badge');
+
+      if (sep === ',') {
+        btnComma.className = 'rounded-lg bg-white px-3 py-2 text-xs font-bold text-excel-800 shadow transition sm:text-sm';
+        btnSemi.className = 'rounded-lg px-3 py-2 text-xs font-bold text-white/85 transition hover:text-white sm:text-sm';
+      } else {
+        btnSemi.className = 'rounded-lg bg-white px-3 py-2 text-xs font-bold text-excel-800 shadow transition sm:text-sm';
+        btnComma.className = 'rounded-lg px-3 py-2 text-xs font-bold text-white/85 transition hover:text-white sm:text-sm';
+      }
+      if (badge) badge.textContent = `Đang dùng: ${sep}`;
+
+      renderCategoryTabs();
+      renderFunctionCards();
+      renderSandboxAll();
+      showToast(`Đã đổi dấu phân cách sang "${sep}"`);
+    }
+
+    /**
+     * Render các tab lọc nhóm hàm.
+     */
+    function renderCategoryTabs() {
+      const container = document.getElementById('category-tabs');
+      if (!container) return;
+      container.innerHTML = '';
+
+      CATEGORIES.forEach((cat) => {
+        const count = cat.id === 'all'
+          ? EXCEL_FUNCTIONS.length
+          : EXCEL_FUNCTIONS.filter((f) => f.cat === cat.id).length;
+        const active = appState.category === cat.id;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('role', 'tab');
+        btn.setAttribute('aria-selected', String(active));
+        btn.onclick = () => selectCategory(cat.id);
+        btn.className = active
+          ? 'shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-excel-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm transition'
+          : 'shrink-0 inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-700 transition hover:border-excel-300 hover:bg-excel-50 hover:text-excel-800';
+
+        const labelSpan = document.createElement('span');
+        labelSpan.textContent = cat.name;
+
+        const countSpan = document.createElement('span');
+        countSpan.className = active
+          ? 'rounded-md bg-white/20 px-1.5 py-0.5 font-mono text-[10px] font-bold text-white'
+          : 'rounded-md bg-slate-200/80 px-1.5 py-0.5 font-mono text-[10px] font-bold text-slate-600';
+        countSpan.textContent = String(count);
+
+        btn.appendChild(labelSpan);
+        btn.appendChild(countSpan);
+        container.appendChild(btn);
+      });
+    }
+
+    /**
+     * Chọn nhóm hàm.
+     */
+    function selectCategory(catId) {
+      appState.category = catId;
+      renderCategoryTabs();
+      renderFunctionCards();
+    }
+
+    /**
+     * Xử lý tìm kiếm nhanh.
+     */
+    function handleSearchChange(val) {
+      appState.search = val.trim().toLowerCase();
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (clearBtn) {
+        clearBtn.classList.toggle('hidden', appState.search.length === 0);
+      }
+      renderFunctionCards();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('search-input');
+      if (input) input.value = '';
+      appState.search = '';
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (clearBtn) clearBtn.classList.add('hidden');
+      renderFunctionCards();
+    }
+
+    function resetFilters() {
+      appState.category = 'all';
+      const input = document.getElementById('search-input');
+      if (input) input.value = '';
+      appState.search = '';
+      const clearBtn = document.getElementById('clear-search-btn');
+      if (clearBtn) clearBtn.classList.add('hidden');
+      renderCategoryTabs();
+      renderFunctionCards();
+    }
+
+    /**
+     * Nạp hàm/tình huống từ thẻ hàm sang Sandbox và cuộn xuống Sandbox.
+     */
+    function tryInSandbox(fnObj) {
+      if (fnObj.sandboxFunc && appState.sbFunc !== fnObj.sandboxFunc) {
+        appState.sbFunc = fnObj.sandboxFunc;
+        const sel = document.getElementById('sb-func-select');
+        if (sel) sel.value = fnObj.sandboxFunc;
+      }
+      renderSandboxAll();
+      const sbEl = document.getElementById('sandbox-section');
+      if (sbEl) {
+        sbEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      showToast(`Đã nạp mô phỏng ${fnObj.name} vào Sandbox`);
+    }
+
+    /**
+     * Lấy class badge màu theo nhóm hàm.
+     */
+    function getCategoryBadgeStyle(catId) {
+      const map = {
+        lookup: 'bg-emerald-50 text-excel-800 border-emerald-200',
+        logic: 'bg-teal-50 text-teal-800 border-teal-200',
+        stats: 'bg-green-50 text-green-800 border-green-200',
+        text: 'bg-sky-50 text-sky-800 border-sky-200',
+        date: 'bg-amber-50 text-amber-800 border-amber-200',
+        math: 'bg-indigo-50 text-indigo-800 border-indigo-200'
+      };
+      return map[catId] || 'bg-slate-100 text-slate-700 border-slate-200';
+    }
+
+    /**
+     * Render danh sách thẻ hàm (Function Cards) chia theo nhóm.
+     */
+    function renderFunctionCards() {
+      const container = document.getElementById('functions-container');
+      const emptyEl = document.getElementById('empty-state');
+      const counterEl = document.getElementById('result-counter');
+      if (!container || !emptyEl || !counterEl) return;
+
+      const filtered = EXCEL_FUNCTIONS.filter((fn) => {
+        const matchCat = appState.category === 'all' || fn.cat === appState.category;
+        if (!matchCat) return false;
+        if (!appState.search) return true;
+        const haystack = `${fn.name} ${fn.summary} ${fn.syntax} ${fn.paramNotes}`.toLowerCase();
+        return haystack.includes(appState.search);
+      });
+
+      counterEl.textContent = `Đang hiển thị ${filtered.length} / ${EXCEL_FUNCTIONS.length} hàm`;
+      container.innerHTML = '';
+
+      if (filtered.length === 0) {
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+      emptyEl.classList.add('hidden');
+
+      const groupsToRender = appState.category === 'all'
+        ? CATEGORIES.filter((c) => c.id !== 'all')
+        : CATEGORIES.filter((c) => c.id === appState.category);
+
+      groupsToRender.forEach((grp) => {
+        const groupItems = filtered.filter((f) => f.cat === grp.id);
+        if (groupItems.length === 0) return;
+
+        const section = document.createElement('section');
+        section.id = `group-${grp.id}`;
+        section.className = 'scroll-mt-32 space-y-5';
+
+        // Tiêu đề nhóm
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3';
+
+        const titleWrap = document.createElement('div');
+        titleWrap.className = 'flex items-center gap-3';
+
+        const bar = document.createElement('span');
+        bar.className = 'h-6 w-1.5 rounded-full bg-excel-600';
+
+        const h2 = document.createElement('h2');
+        h2.className = 'text-lg sm:text-xl font-extrabold text-slate-900';
+        h2.textContent = grp.name;
+
+        titleWrap.appendChild(bar);
+        titleWrap.appendChild(h2);
+
+        const countBadge = document.createElement('span');
+        countBadge.className = 'rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600';
+        countBadge.textContent = `${groupItems.length} hàm`;
+
+        headerDiv.appendChild(titleWrap);
+        headerDiv.appendChild(countBadge);
+        section.appendChild(headerDiv);
+
+        // Grid thẻ hàm
+        const grid = document.createElement('div');
+        grid.className = 'grid gap-5 md:grid-cols-2 xl:grid-cols-3';
+
+        groupItems.forEach((fn) => {
+          const card = document.createElement('article');
+          card.className = 'flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 shadow-xs transition hover:-translate-y-0.5 hover:border-excel-600/40 hover:shadow-md';
+
+          const formattedSyntax = formatSeparator(fn.syntax);
+          const formattedExample = formatSeparator(fn.exampleFormula);
+
+          // Phần trên: Badge + Tên hàm + Tóm tắt
+          const topBlock = document.createElement('div');
+          topBlock.className = 'space-y-3';
+
+          const metaRow = document.createElement('div');
+          metaRow.className = 'flex items-center justify-between gap-2';
+
+          const badge = document.createElement('span');
+          badge.className = `inline-block rounded-lg border px-2.5 py-0.5 text-[11px] font-bold ${getCategoryBadgeStyle(fn.cat)}`;
+          badge.textContent = grp.name.replace(/^\d+\.\s*/, '');
+
+          const fnTitle = document.createElement('h3');
+          fnTitle.className = 'font-mono text-base sm:text-lg font-extrabold text-excel-800';
+          fnTitle.textContent = fn.name;
+
+          metaRow.appendChild(fnTitle);
+          metaRow.appendChild(badge);
+
+          const summaryP = document.createElement('p');
+          summaryP.className = 'text-xs sm:text-sm leading-relaxed text-slate-600';
+          summaryP.textContent = fn.summary;
+
+          // Cú pháp chuẩn
+          const syntaxBox = document.createElement('div');
+          syntaxBox.className = 'rounded-xl bg-slate-50 border border-slate-200/80 px-3 py-2';
+
+          const syntaxLabel = document.createElement('div');
+          syntaxLabel.className = 'text-[10px] font-bold uppercase tracking-wider text-slate-400';
+          syntaxLabel.textContent = 'Cú pháp';
+
+          const syntaxCode = document.createElement('code');
+          syntaxCode.className = 'code-scroll mt-0.5 block overflow-x-auto whitespace-nowrap text-xs font-semibold text-slate-800';
+          syntaxCode.textContent = formattedSyntax;
+
+          syntaxBox.appendChild(syntaxLabel);
+          syntaxBox.appendChild(syntaxCode);
+
+          // Bảng dữ liệu mini trực quan
+          const miniWrap = document.createElement('div');
+          miniWrap.className = 'overflow-x-auto rounded-xl border border-slate-200/90';
+
+          const miniTable = document.createElement('table');
+          miniTable.className = 'min-w-full divide-y divide-slate-200 text-left text-[11px]';
+
+          const thead = document.createElement('thead');
+          thead.className = 'bg-slate-100/90 text-slate-700';
+          const trHead = document.createElement('tr');
+          fn.miniTable.headers.forEach((h) => {
+            const th = document.createElement('th');
+            th.className = 'px-2.5 py-1.5 font-mono font-bold';
+            th.textContent = h;
+            trHead.appendChild(th);
+          });
+          thead.appendChild(trHead);
+          miniTable.appendChild(thead);
+
+          const tbody = document.createElement('tbody');
+          tbody.className = 'divide-y divide-slate-100 bg-white';
+          fn.miniTable.rows.forEach((r) => {
+            const tr = document.createElement('tr');
+            r.forEach((cell) => {
+              const td = document.createElement('td');
+              td.className = 'px-2.5 py-1.5 font-mono text-slate-700';
+              td.textContent = cell;
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+          miniTable.appendChild(tbody);
+          miniWrap.appendChild(miniTable);
+
+          // Công thức ví dụ + Kết quả nổi bật
+          const exBox = document.createElement('div');
+          exBox.className = 'rounded-xl bg-slate-900 p-3 text-white';
+
+          const exCode = document.createElement('code');
+          exCode.className = 'code-scroll block overflow-x-auto whitespace-nowrap text-xs font-medium text-emerald-300';
+          exCode.textContent = formattedExample;
+
+          const outRow = document.createElement('div');
+          outRow.className = 'mt-2 flex items-center justify-between gap-2 border-t border-white/10 pt-2 text-xs';
+
+          const outLabel = document.createElement('span');
+          outLabel.className = 'text-slate-400';
+          outLabel.textContent = 'Kết quả:';
+
+          const outVal = document.createElement('span');
+          outVal.className = 'rounded-md bg-excel-600/30 px-2 py-0.5 font-mono font-bold text-emerald-200 border border-emerald-400/30';
+          outVal.textContent = fn.output;
+
+          outRow.appendChild(outLabel);
+          outRow.appendChild(outVal);
+          exBox.appendChild(exCode);
+          exBox.appendChild(outRow);
+
+          // Giải thích tham số ngắn gọn
+          const noteP = document.createElement('p');
+          noteP.className = 'text-xs leading-relaxed text-slate-500';
+          const noteStrong = document.createElement('span');
+          noteStrong.className = 'font-semibold text-slate-700';
+          noteStrong.textContent = 'Tham số: ';
+          noteP.appendChild(noteStrong);
+          noteP.appendChild(document.createTextNode(fn.paramNotes));
+
+          topBlock.appendChild(metaRow);
+          topBlock.appendChild(summaryP);
+          topBlock.appendChild(syntaxBox);
+          topBlock.appendChild(miniWrap);
+          topBlock.appendChild(exBox);
+          topBlock.appendChild(noteP);
+
+          // Phần dưới: Nút Sao chép & Thử ngay trên Sandbox
+          const actionRow = document.createElement('div');
+          actionRow.className = 'mt-4 flex items-center gap-2 border-t border-slate-100 pt-3.5';
+
+          const copyBtn = document.createElement('button');
+          copyBtn.type = 'button';
+          copyBtn.className = 'flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-50 active:scale-[0.99]';
+          copyBtn.textContent = 'Sao chép công thức';
+          copyBtn.onclick = () => copyFormulaText(formattedExample);
+
+          const tryBtn = document.createElement('button');
+          tryBtn.type = 'button';
+          tryBtn.className = 'flex-1 rounded-xl bg-excel-600 px-3 py-2 text-xs font-bold text-white shadow-2xs transition hover:bg-excel-700 active:scale-[0.99]';
+          tryBtn.textContent = 'Thử ngay trên Sandbox';
+          tryBtn.onclick = () => tryInSandbox(fn);
+
+          actionRow.appendChild(copyBtn);
+          actionRow.appendChild(tryBtn);
+
+          card.appendChild(topBlock);
+          card.appendChild(actionRow);
+          grid.appendChild(card);
+        });
+
+        section.appendChild(grid);
+        container.appendChild(section);
+      });
+    }
+
+    // ==================== INTERACTIVE SANDBOX ====================
+
+    function formatMoney(n) {
+      return Number(n || 0).toLocaleString('vi-VN') + ' đ';
+    }
+
+    function resetSandboxTable() {
+      appState.sandboxRows = JSON.parse(JSON.stringify(INITIAL_SANDBOX_ROWS));
+      renderSandboxAll();
+      showToast('Đã khôi phục bảng dữ liệu mẫu gốc');
+    }
+
+    function handleSandboxFuncChange(funcKey) {
+      appState.sbFunc = funcKey;
+      renderSandboxAll();
+    }
+
+    /**
+     * Render bảng dữ liệu có thể chỉnh sửa trực tiếp.
+     */
+    function renderSandboxTable() {
+      const tbody = document.getElementById('sandbox-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      appState.sandboxRows.forEach((row, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = idx % 2 === 1 ? 'bg-slate-50/60' : 'bg-white';
+
+        // Cột A: Mã SP
+        const tdId = document.createElement('td');
+        tdId.className = 'px-3 py-2 font-mono font-bold text-slate-900 whitespace-nowrap';
+        tdId.textContent = row.id;
+
+        // Cột B: Tên SP
+        const tdName = document.createElement('td');
+        tdName.className = 'px-3 py-2 font-medium text-slate-800 whitespace-nowrap';
+        tdName.textContent = row.name;
+
+        // Cột C: Danh mục (cho phép đổi nhanh)
+        const tdCat = document.createElement('td');
+        tdCat.className = 'px-3 py-2 whitespace-nowrap';
+        const selCat = document.createElement('select');
+        selCat.className = 'rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-medium text-slate-700 focus:border-excel-600 focus:outline-none';
+        ['Phụ kiện', 'Màn hình', 'Laptop'].forEach((c) => {
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          if (row.category === c) opt.selected = true;
+          selCat.appendChild(opt);
+        });
+        selCat.onchange = (e) => {
+          appState.sandboxRows[idx].category = e.target.value;
+          renderSandboxEvaluation();
+        };
+        tdCat.appendChild(selCat);
+
+        // Cột D: Giá bán (nhập số trực tiếp)
+        const tdPrice = document.createElement('td');
+        tdPrice.className = 'px-3 py-2 text-right whitespace-nowrap';
+        const inpPrice = document.createElement('input');
+        inpPrice.type = 'number';
+        inpPrice.min = '0';
+        inpPrice.step = '10000';
+        inpPrice.value = String(row.price);
+        inpPrice.ariaLabel = `Giá bán ${row.id}`;
+        inpPrice.className = 'w-28 rounded-lg border border-slate-300 bg-white px-2 py-1 text-right font-mono text-xs font-semibold text-slate-900 focus:border-excel-600 focus:outline-none focus:ring-1 focus:ring-excel-600';
+        inpPrice.oninput = (e) => {
+          const v = Math.max(0, Number(e.target.value) || 0);
+          appState.sandboxRows[idx].price = v;
+          renderSandboxEvaluation();
+        };
+        tdPrice.appendChild(inpPrice);
+
+        // Cột E: SL Tồn (nhập số trực tiếp)
+        const tdStock = document.createElement('td');
+        tdStock.className = 'px-3 py-2 text-right whitespace-nowrap';
+        const inpStock = document.createElement('input');
+        inpStock.type = 'number';
+        inpStock.min = '0';
+        inpStock.step = '1';
+        inpStock.value = String(row.stock);
+        inpStock.ariaLabel = `Số lượng tồn ${row.id}`;
+        inpStock.className = 'w-20 rounded-lg border border-slate-300 bg-white px-2 py-1 text-right font-mono text-xs font-semibold text-slate-900 focus:border-excel-600 focus:outline-none focus:ring-1 focus:ring-excel-600';
+        inpStock.oninput = (e) => {
+          const v = Math.max(0, Math.floor(Number(e.target.value) || 0));
+          appState.sandboxRows[idx].stock = v;
+          // Tự cập nhật trạng thái nếu tồn = 0
+          if (v === 0) appState.sandboxRows[idx].status = 'Hết hàng';
+          else if (v < 10) appState.sandboxRows[idx].status = 'Sắp hết';
+          else appState.sandboxRows[idx].status = 'Còn hàng';
+          renderSandboxEvaluation();
+        };
+        tdStock.appendChild(inpStock);
+
+        // Cột F: Ngày nhập
+        const tdDate = document.createElement('td');
+        tdDate.className = 'px-3 py-2 font-mono text-xs text-slate-600 whitespace-nowrap';
+        tdDate.textContent = row.date;
+
+        // Cột G: Trạng thái
+        const tdStatus = document.createElement('td');
+        tdStatus.className = 'px-3 py-2 whitespace-nowrap';
+        const selStatus = document.createElement('select');
+        selStatus.className = 'rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-700 focus:border-excel-600 focus:outline-none';
+        ['Còn hàng', 'Sắp hết', 'Hết hàng'].forEach((st) => {
+          const opt = document.createElement('option');
+          opt.value = st;
+          opt.textContent = st;
+          if (row.status === st) opt.selected = true;
+          selStatus.appendChild(opt);
+        });
+        selStatus.onchange = (e) => {
+          appState.sandboxRows[idx].status = e.target.value;
+          renderSandboxEvaluation();
+        };
+        tdStatus.appendChild(selStatus);
+
+        tr.appendChild(tdId);
+        tr.appendChild(tdName);
+        tr.appendChild(tdCat);
+        tr.appendChild(tdPrice);
+        tr.appendChild(tdStock);
+        tr.appendChild(tdDate);
+        tr.appendChild(tdStatus);
+        tbody.appendChild(tr);
+      });
+    }
+
+    /**
+     * Render ô điều khiển tham số riêng cho từng hàm trong Sandbox.
+     */
+    function renderSandboxParams() {
+      const wrap = document.getElementById('sb-dynamic-params');
+      if (!wrap) return;
+      wrap.innerHTML = '';
+
+      const rows = appState.sandboxRows;
+      const p = appState.sbParams;
+      const fn = appState.sbFunc;
+
+      const makeProductSelect = (id, labelText, currentVal, onChangeCb) => {
+        const div = document.createElement('div');
+        const lbl = document.createElement('label');
+        lbl.setAttribute('for', id);
+        lbl.className = 'block text-xs font-bold text-slate-700';
+        lbl.textContent = labelText;
+
+        const sel = document.createElement('select');
+        sel.id = id;
+        sel.className = 'mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-slate-800 focus:border-excel-600 focus:outline-none';
+        rows.forEach((r) => {
+          const opt = document.createElement('option');
+          opt.value = r.id;
+          opt.textContent = `${r.id} — ${r.name}`;
+          if (r.id === currentVal) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        sel.onchange = (e) => {
+          onChangeCb(e.target.value);
+          renderSandboxEvaluation();
+        };
+        div.appendChild(lbl);
+        div.appendChild(sel);
+        return div;
+      };
+
+      const makeCatSelect = (id, labelText, currentVal, onChangeCb) => {
+        const div = document.createElement('div');
+        const lbl = document.createElement('label');
+        lbl.setAttribute('for', id);
+        lbl.className = 'block text-xs font-bold text-slate-700';
+        lbl.textContent = labelText;
+
+        const sel = document.createElement('select');
+        sel.id = id;
+        sel.className = 'mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-slate-800 focus:border-excel-600 focus:outline-none';
+        ['Phụ kiện', 'Màn hình', 'Laptop'].forEach((c) => {
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          if (c === currentVal) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        sel.onchange = (e) => {
+          onChangeCb(e.target.value);
+          renderSandboxEvaluation();
+        };
+        div.appendChild(lbl);
+        div.appendChild(sel);
+        return div;
+      };
+
+      if (fn === 'VLOOKUP') {
+        wrap.appendChild(makeProductSelect('p-vl-id', 'Mã sản phẩm cần dò (cột A)', p.vlookupId, (v) => { p.vlookupId = v; }));
+
+        const divCol = document.createElement('div');
+        const lbl = document.createElement('label');
+        lbl.setAttribute('for', 'p-vl-col');
+        lbl.className = 'block text-xs font-bold text-slate-700';
+        lbl.textContent = 'Cột cần lấy kết quả (col_index_num)';
+
+        const sel = document.createElement('select');
+        sel.id = 'p-vl-col';
+        sel.className = 'mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-slate-800 focus:border-excel-600 focus:outline-none';
+        [
+          { val: 2, text: 'Cột 2 — Tên SP' },
+          { val: 3, text: 'Cột 3 — Danh mục' },
+          { val: 4, text: 'Cột 4 — Giá bán' },
+          { val: 5, text: 'Cột 5 — SL Tồn' },
+          { val: 7, text: 'Cột 7 — Trạng thái' }
+        ].forEach((item) => {
+          const opt = document.createElement('option');
+          opt.value = String(item.val);
+          opt.textContent = item.text;
+          if (Number(p.vlookupCol) === item.val) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        sel.onchange = (e) => {
+          p.vlookupCol = Number(e.target.value);
+          renderSandboxEvaluation();
+        };
+        divCol.appendChild(lbl);
+        divCol.appendChild(sel);
+        wrap.appendChild(divCol);
+      } else if (fn === 'INDEX_MATCH') {
+        wrap.appendChild(makeProductSelect('p-im-id', 'Mã SP (MATCH theo hàng)', p.imRowId, (v) => { p.imRowId = v; }));
+
+        const divCol = document.createElement('div');
+        const lbl = document.createElement('label');
+        lbl.setAttribute('for', 'p-im-col');
+        lbl.className = 'block text-xs font-bold text-slate-700';
+        lbl.textContent = 'Tiêu đề cột (MATCH theo hàng tiêu đề)';
+
+        const sel = document.createElement('select');
+        sel.id = 'p-im-col';
+        sel.className = 'mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-slate-800 focus:border-excel-600 focus:outline-none';
+        [
+          { key: 'name', text: 'Tên SP' },
+          { key: 'category', text: 'Danh mục' },
+          { key: 'price', text: 'Giá bán' },
+          { key: 'stock', text: 'SL Tồn' },
+          { key: 'status', text: 'Trạng thái' }
+        ].forEach((item) => {
+          const opt = document.createElement('option');
+          opt.value = item.key;
+          opt.textContent = item.text;
+          if (p.imColKey === item.key) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        sel.onchange = (e) => {
+          p.imColKey = e.target.value;
+          renderSandboxEvaluation();
+        };
+        divCol.appendChild(lbl);
+        divCol.appendChild(sel);
+        wrap.appendChild(divCol);
+      } else if (fn === 'IF') {
+        wrap.appendChild(makeProductSelect('p-if-id', 'Chọn sản phẩm kiểm tra tồn kho', p.ifId, (v) => { p.ifId = v; }));
+
+        const divThr = document.createElement('div');
+        const lbl = document.createElement('label');
+        lbl.setAttribute('for', 'p-if-thr');
+        lbl.className = 'block text-xs font-bold text-slate-700';
+        lbl.textContent = 'Ngưỡng cảnh báo tồn kho tối thiểu';
+
+        const inp = document.createElement('input');
+        inp.id = 'p-if-thr';
+        inp.type = 'number';
+        inp.min = '0';
+        inp.value = String(p.ifThreshold);
+        inp.className = 'mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 font-mono text-xs sm:text-sm font-semibold text-slate-800 focus:border-excel-600 focus:outline-none';
+        inp.oninput = (e) => {
+          p.ifThreshold = Math.max(0, Number(e.target.value) || 0);
+          renderSandboxEvaluation();
+        };
+        divThr.appendChild(lbl);
+        divThr.appendChild(inp);
+        wrap.appendChild(divThr);
+      } else if (fn === 'SUMIFS') {
+        wrap.appendChild(makeCatSelect('p-sum-cat', 'Điều kiện 1: Danh mục (C2:C6)', p.sumifsCat, (v) => { p.sumifsCat = v; }));
+
+        const divSt = document.createElement('div');
+        const lbl = document.createElement('label');
+        lbl.setAttribute('for', 'p-sum-st');
+        lbl.className = 'block text-xs font-bold text-slate-700';
+        lbl.textContent = 'Điều kiện 2: Trạng thái (G2:G6)';
+
+        const sel = document.createElement('select');
+        sel.id = 'p-sum-st';
+        sel.className = 'mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-slate-800 focus:border-excel-600 focus:outline-none';
+        ['Còn hàng', 'Sắp hết', 'Hết hàng'].forEach((st) => {
+          const opt = document.createElement('option');
+          opt.value = st;
+          opt.textContent = st;
+          if (p.sumifsStatus === st) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        sel.onchange = (e) => {
+          p.sumifsStatus = e.target.value;
+          renderSandboxEvaluation();
+        };
+        divSt.appendChild(lbl);
+        divSt.appendChild(sel);
+        wrap.appendChild(divSt);
+      } else if (fn === 'COUNTIFS') {
+        wrap.appendChild(makeCatSelect('p-cnt-cat', 'Điều kiện 1: Danh mục (C2:C6)', p.countifsCat, (v) => { p.countifsCat = v; }));
+
+        const divMin = document.createElement('div');
+        const lbl = document.createElement('label');
+        lbl.setAttribute('for', 'p-cnt-min');
+        lbl.className = 'block text-xs font-bold text-slate-700';
+        lbl.textContent = 'Điều kiện 2: SL Tồn tối thiểu (E2:E6 >=)';
+
+        const inp = document.createElement('input');
+        inp.id = 'p-cnt-min';
+        inp.type = 'number';
+        inp.min = '0';
+        inp.value = String(p.countifsMinStock);
+        inp.className = 'mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 font-mono text-xs sm:text-sm font-semibold text-slate-800 focus:border-excel-600 focus:outline-none';
+        inp.oninput = (e) => {
+          p.countifsMinStock = Math.max(0, Number(e.target.value) || 0);
+          renderSandboxEvaluation();
+        };
+        divMin.appendChild(lbl);
+        divMin.appendChild(inp);
+        wrap.appendChild(divMin);
+      } else if (fn === 'AVERAGEIF') {
+        wrap.appendChild(makeCatSelect('p-avg-cat', 'Danh mục tính giá bán trung bình', p.avgCat, (v) => { p.avgCat = v; }));
+      } else if (fn === 'TEXTJOIN') {
+        wrap.appendChild(makeCatSelect('p-join-cat', 'Lọc nối Tên SP theo Danh mục', p.joinCat, (v) => { p.joinCat = v; }));
+      } else if (fn === 'ROUND') {
+        wrap.appendChild(makeProductSelect('p-rd-id', 'Chọn sản phẩm lấy Giá bán', p.roundId, (v) => { p.roundId = v; }));
+
+        const divDig = document.createElement('div');
+        const lbl = document.createElement('label');
+        lbl.setAttribute('for', 'p-rd-dig');
+        lbl.className = 'block text-xs font-bold text-slate-700';
+        lbl.textContent = 'Tham số num_digits (làm tròn trên giá × 1.123)';
+
+        const sel = document.createElement('select');
+        sel.id = 'p-rd-dig';
+        sel.className = 'mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-medium text-slate-800 focus:border-excel-600 focus:outline-none';
+        [
+          { val: 0, text: '0 — Làm tròn tới hàng đơn vị (1 đ)' },
+          { val: -2, text: '-2 — Làm tròn tới hàng trăm (100 đ)' },
+          { val: -3, text: '-3 — Làm tròn tới hàng nghìn (1,000 đ)' }
+        ].forEach((item) => {
+          const opt = document.createElement('option');
+          opt.value = String(item.val);
+          opt.textContent = item.text;
+          if (Number(p.roundDigits) === item.val) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        sel.onchange = (e) => {
+          p.roundDigits = Number(e.target.value);
+          renderSandboxEvaluation();
+        };
+        divDig.appendChild(lbl);
+        divDig.appendChild(sel);
+        wrap.appendChild(divDig);
+      }
+    }
+
+    /**
+     * Tính toán kết quả trực tiếp, công thức và các bước giải thích cho Sandbox.
+     */
+    function renderSandboxEvaluation() {
+      const formulaBox = document.getElementById('sb-formula-box');
+      const outputValEl = document.getElementById('sb-output-value');
+      const outputNoteEl = document.getElementById('sb-output-note');
+      const stepListEl = document.getElementById('sb-step-list');
+      const copyBtn = document.getElementById('sb-copy-formula-btn');
+      if (!formulaBox || !outputValEl || !outputNoteEl || !stepListEl) return;
+
+      stepListEl.innerHTML = '';
+      const rows = appState.sandboxRows;
+      const p = appState.sbParams;
+      const fn = appState.sbFunc;
+
+      let rawFormula = '';
+      let outText = '';
+      let noteText = '';
+      let steps = [];
+
+      if (fn === 'VLOOKUP') {
+        const found = rows.find((r) => r.id === p.vlookupId) || rows[0];
+        const colMap = {
+          2: { label: 'Tên SP', val: found.name },
+          3: { label: 'Danh mục', val: found.category },
+          4: { label: 'Giá bán', val: formatMoney(found.price) },
+          5: { label: 'SL Tồn', val: `${found.stock} sản phẩm` },
+          7: { label: 'Trạng thái', val: found.status }
+        };
+        const chosen = colMap[p.vlookupCol] || colMap[4];
+        rawFormula = `=VLOOKUP("${found.id}", $A$2:$G$6, ${p.vlookupCol}, FALSE)`;
+        outText = chosen.val;
+        noteText = `Tìm thấy mã "${found.id}" (${found.name}) — trả về cột ${p.vlookupCol} (${chosen.label}).`;
+        steps = [
+          `Dò tìm giá trị "${found.id}" theo chiều dọc trong cột đầu tiên của vùng $A$2:$G$6.`,
+          `Khớp chính xác (FALSE) tại dòng của "${found.name}".`,
+          `Lấy giá trị ở cột thứ ${p.vlookupCol} (${chosen.label}) -> Kết quả: ${chosen.val}.`
+        ];
+      } else if (fn === 'INDEX_MATCH') {
+        const rowIdx = Math.max(1, rows.findIndex((r) => r.id === p.imRowId) + 1);
+        const targetRow = rows[rowIdx - 1] || rows[0];
+        const headerLabels = {
+          name: { title: 'Tên SP', colNum: 1, val: targetRow.name },
+          category: { title: 'Danh mục', colNum: 2, val: targetRow.category },
+          price: { title: 'Giá bán', colNum: 3, val: formatMoney(targetRow.price) },
+          stock: { title: 'SL Tồn', colNum: 4, val: `${targetRow.stock} sản phẩm` },
+          status: { title: 'Trạng thái', colNum: 6, val: targetRow.status }
+        };
+        const colObj = headerLabels[p.imColKey] || headerLabels.price;
+        rawFormula = `=INDEX($B$2:$G$6, MATCH("${targetRow.id}", $A$2:$A$6, 0), MATCH("${colObj.title}", $B$1:$G$1, 0))`;
+        outText = colObj.val;
+        noteText = `Giao điểm hàng ${rowIdx} (${targetRow.id}) và cột "${colObj.title}" (vị trí ${colObj.colNum} trong B1:G1).`;
+        steps = [
+          `MATCH("${targetRow.id}", $A$2:$A$6, 0) trả về vị trí hàng thứ ${rowIdx} trong vùng $B$2:$G$6.`,
+          `MATCH("${colObj.title}", $B$1:$G$1, 0) trả về vị trí cột thứ ${colObj.colNum} trong vùng $B$2:$G$6.`,
+          `INDEX lấy giá trị tại hàng ${rowIdx}, cột ${colObj.colNum} = ${colObj.val}.`
+        ];
+      } else if (fn === 'IF') {
+        const target = rows.find((r) => r.id === p.ifId) || rows[0];
+        const isEnough = target.stock >= p.ifThreshold;
+        rawFormula = `=IF(E2>=${p.ifThreshold}, "Đủ tồn kho", "Cần nhập thêm")`;
+        outText = isEnough ? 'Đủ tồn kho' : 'Cần nhập thêm';
+        noteText = `Sản phẩm ${target.id} (${target.name}) đang có SL Tồn = ${target.stock} so với ngưỡng ${p.ifThreshold}.`;
+        steps = [
+          `Lấy số lượng tồn của ${target.id}: ${target.stock}.`,
+          `Kiểm tra điều kiện ${target.stock} >= ${p.ifThreshold} -> ${isEnough ? 'TRUE (Đúng)' : 'FALSE (Sai)'}.`,
+          `Trả về nhánh "${outText}".`
+        ];
+      } else if (fn === 'SUMIFS') {
+        // Tính tổng Giá bán theo Danh mục và Trạng thái trong bảng
+        const matched = rows.filter((r) => r.category === p.sumifsCat && r.status === p.sumifsStatus);
+        const total = matched.reduce((acc, r) => acc + r.price, 0);
+        rawFormula = `=SUMIFS($D$2:$D$6, $C$2:$C$6, "${p.sumifsCat}", $G$2:$G$6, "${p.sumifsStatus}")`;
+        outText = formatMoney(total);
+        noteText = `Có ${matched.length} sản phẩm thuộc danh mục "${p.sumifsCat}" và trạng thái "${p.sumifsStatus}".`;
+        steps = [
+          `Lọc các dòng có Danh mục (C2:C6) = "${p.sumifsCat}" và Trạng thái (G2:G6) = "${p.sumifsStatus}".`,
+          matched.length > 0
+            ? `Các dòng thỏa mãn: ${matched.map((m) => `${m.id} (${formatMoney(m.price)})`).join(', ')}.`
+            : 'Không có dòng nào thỏa mãn đồng thời cả 2 điều kiện.',
+          `Cộng tổng cột Giá bán ($D$2:$D$6) của các dòng đạt -> ${formatMoney(total)}.`
+        ];
+      } else if (fn === 'COUNTIFS') {
+        const matched = rows.filter((r) => r.category === p.countifsCat && r.stock >= p.countifsMinStock);
+        rawFormula = `=COUNTIFS($C$2:$C$6, "${p.countifsCat}", $E$2:$E$6, ">=${p.countifsMinStock}")`;
+        outText = `${matched.length} sản phẩm`;
+        noteText = `Đếm số dòng có Danh mục = "${p.countifsCat}" và SL Tồn >= ${p.countifsMinStock}.`;
+        steps = [
+          `Xét điều kiện 1: Danh mục = "${p.countifsCat}".`,
+          `Xét điều kiện 2: SL Tồn >= ${p.countifsMinStock}.`,
+          `Đếm được ${matched.length} dòng thỏa mãn cả hai điều kiện${matched.length ? ` (${matched.map((x) => x.id).join(', ')})` : ''}.`
+        ];
+      } else if (fn === 'AVERAGEIF') {
+        const matched = rows.filter((r) => r.category === p.avgCat);
+        const avg = matched.length > 0
+          ? matched.reduce((acc, r) => acc + r.price, 0) / matched.length
+          : 0;
+        rawFormula = `=AVERAGEIF($C$2:$C$6, "${p.avgCat}", $D$2:$D$6)`;
+        outText = matched.length > 0 ? formatMoney(Math.round(avg)) : 'Không có dữ liệu';
+        noteText = `Trung bình giá bán của ${matched.length} sản phẩm thuộc danh mục "${p.avgCat}".`;
+        steps = [
+          `Lọc các sản phẩm thuộc danh mục "${p.avgCat}" (${matched.length} sản phẩm).`,
+          matched.length > 0
+            ? `Giá bán từng món: ${matched.map((x) => formatMoney(x.price)).join(' + ')}.`
+            : 'Không có sản phẩm nào khớp danh mục.',
+          `Tính trung bình cộng -> ${outText}.`
+        ];
+      } else if (fn === 'TEXTJOIN') {
+        const matched = rows.filter((r) => r.category === p.joinCat);
+        const joined = matched.map((r) => r.name).join(', ');
+        rawFormula = `=TEXTJOIN(", ", TRUE, IF($C$2:$C$6="${p.joinCat}", $B$2:$B$6, ""))`;
+        outText = joined || '(Trống)';
+        noteText = `Nối tên ${matched.length} sản phẩm thuộc danh mục "${p.joinCat}" bằng dấu ", ".`;
+        steps = [
+          `Tìm các sản phẩm có Danh mục = "${p.joinCat}".`,
+          `Bỏ qua các ô không khớp (ignore_empty = TRUE).`,
+          `Nối chuỗi bằng dấu phân cách ", " -> ${outText}.`
+        ];
+      } else if (fn === 'ROUND') {
+        const target = rows.find((r) => r.id === p.roundId) || rows[0];
+        const rawVal = target.price * 1.123;
+        let roundedVal = rawVal;
+        if (p.roundDigits === 0) roundedVal = Math.round(rawVal);
+        else if (p.roundDigits === -2) roundedVal = Math.round(rawVal / 100) * 100;
+        else if (p.roundDigits === -3) roundedVal = Math.round(rawVal / 1000) * 1000;
+
+        rawFormula = `=ROUND(${target.price}*1.123, ${p.roundDigits})`;
+        outText = formatMoney(roundedVal);
+        noteText = `Giá gốc ${formatMoney(target.price)} × 1.123 = ${rawVal.toLocaleString('vi-VN', { maximumFractionDigits: 2 })} đ -> Làm tròn với num_digits = ${p.roundDigits}.`;
+        steps = [
+          `Nhân giá gốc ${formatMoney(target.price)} với hệ số 1.123 được ${rawVal.toLocaleString('vi-VN', { maximumFractionDigits: 2 })} đ.`,
+          `Áp dụng ROUND(..., ${p.roundDigits}) để làm tròn theo quy tắc chuẩn.`,
+          `Kết quả cuối cùng: ${outText}.`
+        ];
+      }
+
+      const finalFormula = formatSeparator(rawFormula);
+      formulaBox.textContent = finalFormula;
+      outputValEl.textContent = outText;
+      outputNoteEl.textContent = noteText;
+
+      steps.forEach((st) => {
+        const li = document.createElement('li');
+        li.textContent = st;
+        stepListEl.appendChild(li);
+      });
+
+      if (copyBtn) {
+        copyBtn.onclick = () => copyFormulaText(finalFormula);
+      }
+    }
+
+    function renderSandboxAll() {
+      renderSandboxTable();
+      renderSandboxParams();
+      renderSandboxEvaluation();
+    }
+
+    // Theo dõi cuộn trang để hiện nút cuộn lên đầu trang
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('scroll-top-btn');
+      if (!btn) return;
+      if (window.scrollY > 420) {
+        btn.classList.remove('hidden');
+        btn.classList.add('flex');
+      } else {
+        btn.classList.add('hidden');
+        btn.classList.remove('flex');
+      }
+    }, { passive: true });
+
+    // Khởi tạo toàn bộ giao diện khi tải trang
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        const statEl = document.getElementById('stat-total-funcs');
+        if (statEl) statEl.textContent = String(EXCEL_FUNCTIONS.length);
+        renderCategoryTabs();
+        renderFunctionCards();
+        renderSandboxAll();
+      } catch (err) {
+        console.error('Lỗi khởi tạo ứng dụng:', err);
+      }
+    });
+  </script>
+</body>
+</html>
